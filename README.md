@@ -9,3 +9,5 @@ Introducing the BACK Stack
 - Have Cluster ready to go
 - AWS & Azure
 
+
+![architecture diagram](./imgs/arch.png)
