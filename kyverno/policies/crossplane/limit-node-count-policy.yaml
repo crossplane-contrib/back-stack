@@ -1,0 +1,33 @@
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  name: limit-node-count-policy
+  annotations:
+    policies.kyverno.io/title: Limit Node Count
+    policies.kyverno.io/category: Upbound Crossplane
+    policies.kyverno.io/minversion: 1.9.0
+    kyverno.io/kyverno-version: 1.9.0
+    kyverno.io/kubernetes-version: "1.24"
+    policies.kyverno.io/subject: Cluster
+    policies.kyverno.io/description: >-
+      User should not be able to create clusters with more than 3 nodes
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+  - name: limit-node-count
+    match:
+      any:
+      - resources:
+          kinds:
+          - aws.platformref.upbound.io/v1alpha1/Cluster
+    validate:
+      message: >-
+        You cannot create a cluster with more than 3 nodes.
+        Please reduce the node count and create the cluster.
+      deny:
+        conditions:
+          any:
+          - key: "{{request.object.spec.parameters.nodes.count}}"
+            operator: GreaterThan
+            value: 3

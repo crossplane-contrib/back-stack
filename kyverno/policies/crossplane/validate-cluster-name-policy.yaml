@@ -1,0 +1,37 @@
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  name: validate-cluster-name-policy
+  annotations:
+    policies.kyverno.io/title: validat-cluster-name
+    policies.kyverno.io/category: Upbound Crossplane
+    policies.kyverno.io/minversion: 1.9.0
+    kyverno.io/kyverno-version: 1.9.0
+    kyverno.io/kubernetes-version: "1.24"
+    policies.kyverno.io/subject: Cluster
+    policies.kyverno.io/description: >-
+      Cluster name should start with department name as the prefix
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+  - name: validate-cluster-name
+    match:
+      any:
+      - resources:
+          kinds:
+          - aws.platformref.upbound.io/v1alpha1/Cluster
+    context:
+      - name: prefix
+        variable:
+          jmesPath: request.object.spec.id.starts_with(@,'dev-') || request.object.spec.id.starts_with(@,'test-')
+    validate:
+      message: >-
+        You can only create clusters with your department name as the prefix.
+        Please change the cluster name.
+      deny:
+        conditions:
+          any:
+          - key: "{{ prefix }}"
+            operator: NotEquals
+            value: true
