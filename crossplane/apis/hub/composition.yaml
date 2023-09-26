@@ -1,0 +1,70 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: default-xhub.backstack.cncf.io
+spec:
+  compositeTypeRef:
+    apiVersion: backstack.cncf.io/v1alpha1
+    kind: XHub
+  resources:
+  - name: argocd
+    base:
+      apiVersion: helm.crossplane.io/v1beta1
+      kind: Release
+      spec:
+        forProvider:
+          namespace: argocd
+          chart:
+            name: argo-cd
+            repository: https://argoproj.github.io/argo-helm
+          values:
+            configs:
+              cm:
+                application.resourceTrackingMethod: annotation
+        providerConfigRef:
+          name: local
+    patches:
+    - fromFieldPath: metadata.name 
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string: 
+          fmt: "%s-argocd"
+  - name: backstage
+    base:
+      apiVersion: helm.crossplane.io/v1beta1
+      kind: Release
+      spec:
+        forProvider:
+          namespace: backstage
+          chart:
+            name: backstage
+            repository: https://backstage.github.io/charts
+        providerConfigRef:
+          name: local
+    patches:
+    - fromFieldPath: metadata.name 
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string: 
+          fmt: "%s-backstage"
+  - name: kyverno
+    base:
+      apiVersion: helm.crossplane.io/v1beta1
+      kind: Release
+      spec:
+        forProvider:
+          namespace: kyverno
+          chart:
+            name: kyverno
+            repository: https://kyverno.github.io/kyverno
+        providerConfigRef:
+          name: local
+    patches:
+    - fromFieldPath: metadata.name 
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string: 
+          fmt: "%s-kyverno"

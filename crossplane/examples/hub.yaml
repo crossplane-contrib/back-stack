@@ -1,0 +1,5 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: Hub
+metadata:
+  name: hub
+spec: {}
