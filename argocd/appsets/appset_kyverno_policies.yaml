@@ -1,0 +1,40 @@
+kind: ApplicationSet
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: kyverno-policies
+  namespace: argocd
+spec:
+  generators:
+  - clusters:
+      selector:
+        matchLabels:
+          clusterType: spoke        
+  template: 
+    metadata:
+      name: '{{name}}-kyverno-policies'
+      annotations:
+        argocd.argoproj.io/sync-wave: "1"
+    spec:
+      project: "default"
+      source:
+        repoURL: https://github.com/kyverno/kyverno
+        targetRevision: release-1.10
+        path: charts/kyverno-policies
+        helm:
+          releaseName: "{{name}}-kyverno-policies"
+          valueFiles:
+          - "values.yaml"
+      destination:
+        server: '{{server}}'
+        namespace: kyverno
+      syncPolicy:
+        syncOptions:
+        - Replace=true
+        automated:
+          selfHeal: true  
+        retry:
+          limit: 30
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m0s
