@@ -1,0 +1,16 @@
+apiVersion: aws.platformref.upbound.io/v1alpha1
+kind: Cluster
+metadata:
+  name: {{cluster-name}}
+  namespace: default
+  annotations:
+    uptest.upbound.io/pre-delete-hook: testhooks/delete-release.sh
+spec:
+  id: {{cluster-name}}
+  parameters:
+    version: "1.26"
+    nodes:
+      count: 3
+      size: small
+  writeConnectionSecretToRef:
+    name: platform-ref-aws-kubeconfig
