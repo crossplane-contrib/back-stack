@@ -10,7 +10,7 @@ spec:
   parameters:
     version: "1.26"
     nodes:
-      count: 3
+      count: {{num-nodes}}
       size: small
   writeConnectionSecretToRef:
     name: platform-ref-aws-kubeconfig
