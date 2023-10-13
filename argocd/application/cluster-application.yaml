@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    name: ''
+    namespace: 'clusters'
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: demo/cluster 
+    repoURL: 'https://github.com/opendev-ie/back-stack'
+    targetRevision: HEAD
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
