@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: components
+  description: A collection of all components
+spec:
+  targets:
+    - ./components/backstage.yaml
+    - ./components/argocd.yaml
+    - ./components/crossplane.yaml
+    - ./components/kyverno.yaml

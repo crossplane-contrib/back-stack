@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: backstage
+  description: Software Catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: infrastructure
+  system: back-stack
