@@ -48,6 +48,6 @@ spec:
         repoUrl: github.com?repo=back-stack&owner=opendev-ie
         branchName: eks-claim
   output:
-    text:
-      - title: More Information
-        content: "Your cluster is ready"
+    links:
+      - title: Accept Pull Request
+        url: ${{ steps['publish'].output.remoteUrl }}
