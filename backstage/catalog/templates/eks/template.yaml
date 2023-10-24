@@ -49,5 +49,9 @@ spec:
         branchName: eks-claim
   output:
     links:
-      - title: Accept Pull Request
+      - title: Pull Request
         url: ${{ steps['publish'].output.remoteUrl }}
+    text:
+      - title: Accept Pull Request
+        content: |
+          To finish publishing the cluster, accept the pull request.
