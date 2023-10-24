@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   annotations: 
-    backstage.io/kubernetes-id: argocd-service
+    backstage.io/kubernetes-label-selector: app.kubernetes.io/part-of=argocd
   name: argocd
   description: Gitops Platform
 spec:
