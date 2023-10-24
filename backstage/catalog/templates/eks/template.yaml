@@ -48,10 +48,7 @@ spec:
         repoUrl: github.com?repo=back-stack&owner=opendev-ie
         branchName: eks-claim
   output:
-    links:
-      - title: Pull Request
-        url: ${{ steps['publish'].output.remoteUrl }}
     text:
       - title: Accept Pull Request
         content: |
-          To finish publishing the cluster, accept the pull request.
+          To finish publishing the cluster, accept the [pull request](${{ steps['publish'].output.remoteUrl }}) 
