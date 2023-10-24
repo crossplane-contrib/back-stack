@@ -40,6 +40,9 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
+        pr_branchname:
+          title: Branch name for Pull Request
+          type: string
   steps:
     - id: template
       name: Fetch Cluster claim template
