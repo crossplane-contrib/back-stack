@@ -2,8 +2,8 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: eks
-  title: EKS Cluster
-  description: Create an EKS Cluster to host workloads
+  title: New Cluster (EKS)
+  description: Request an EKS Cluster to host workloads
   tags:
     - caas
     - eks
@@ -11,24 +11,40 @@ spec:
   owner: infrastructure
   type: service
   parameters:
-    - title: Cluster Parameters
+    - title: Cluster Configuration Parameters
       required:
         - cluster_id
-        - owner
+        - region
       properties:
         cluster_id:
-          title: Cluster Id
+          title: Cluster ID
           type: string
-          description: ID of this Cluster that other objects will use to refer to it
-          ui:field: EntityNamePicker
-        owner:
-          title: Owner
+          description: ID of this Cluster that other objects will use to refer to it.
+        region:
+          title: Region
           type: string
-          description: Owner of the component
-          ui:field: OwnerPicker
-          ui:options:
-            allowedKinds:
-              - Group
+          description: Region is the region you'd like your resource to be created in.
+        version:
+          title: Version
+          type: string
+          description: Kubernetes version of the Cluster
+          default: "1.28"
+          enum:
+            - "1.28"
+            - "1.27"
+            - "1.26"
+            - "1.25"
+            - "1.24"
+        nodes_count:
+          title: Node Group Size
+          type: integer
+          description: Desired node count, from 1 to 100.
+          default: 3
+        nodes_instance_type:
+          title: Node Instance Type
+          type: string
+          description: Instance type associated with the Node Group.
+          default: t3.small
     - title: Destination
       required:
         - repo_url
@@ -53,6 +69,10 @@ spec:
         targetPath: demo/clusters/
         values:
           cluster_id: ${{ parameters.cluster_id }}
+          region: ${{ parameters.region }}
+          version: ${{ parameters.version }}
+          nodes_count: ${{ parameters.nodes_count }}
+          nodes_instance_type: ${{ parameters.nodes_instance_type }}
     - id: publish
       name: Publish
       action: publish:github:pull-request
@@ -61,10 +81,15 @@ spec:
         title: Request for new cluster 
         description: |
           Cluster ID: ${{ parameters.cluster_id }}
+          Region:     ${{ parameters.region }}
+          Version:    ${{ parameters.version }}
+          Nodes:      ${{ parameters.nodes_instance_type }} (${{ parameters.nodes_count }})
         repoUrl: ${{ parameters.repo_url }} 
         branchName: ${{ parameters.pull_request_branch_name }}
   output:
     text:
       - title: Accept Pull Request
         content: |
-          To finish publishing the cluster, accept the [pull request](${{ steps['publish'].output.remoteUrl }}) 
+          Your New Cluster Request has been published to GitHub.
+
+          To finish creating the cluster, review and accept the [pull request](${{ steps['publish'].output.remoteUrl }}) 

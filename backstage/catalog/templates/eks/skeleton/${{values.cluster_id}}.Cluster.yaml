@@ -1,4 +1,4 @@
-apiVersion: aws.caas.upbound.io/v1alpha1
+apiVersion: backstack.cncf.io/v1alpha1
 kind: Cluster
 metadata:
   name: ${{ values.cluster_id }}
@@ -6,10 +6,10 @@ metadata:
 spec:
   parameters:
     id: ${{ values.cluster_id }}
-    region: eu-west-1
-    version: "1.28"
+    region: ${{ values.region }}
+    version: ${{ values.version }}
     nodes:
-      count: 3
-      size: small
+      count: ${{ values.nodes_count }}
+      instanceType: ${{ values.nodes_instance_type }}
   writeConnectionSecretToRef:
     name: ${{ values.cluster_id }}-kubeconfig
