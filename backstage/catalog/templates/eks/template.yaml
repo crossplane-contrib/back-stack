@@ -40,9 +40,10 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
-        pr_branchname:
+        pull_request_branch_name:
           title: Branch name for Pull Request
           type: string
+          default: new-cluster-request
   steps:
     - id: template
       name: Fetch Cluster claim template
@@ -57,10 +58,11 @@ spec:
       action: publish:github:pull-request
       input:
         allowedHosts: ['github.com']
-        title: EKS Request
-        descripton: New cluster, please
+        title: Request for new cluster 
+        descripton: |
+          Cluster ID: ${{ parameters.cluster_id }}
         repoUrl: ${{ parameters.repo_url }} 
-        branchName: eks-claim
+        branchName: ${{ parameters.pull_request_branch_name }}
   output:
     text:
       - title: Accept Pull Request
