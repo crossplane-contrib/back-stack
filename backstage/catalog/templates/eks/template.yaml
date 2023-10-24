@@ -30,11 +30,23 @@ spec:
             allowedKinds:
               - Group
   steps:
-    - id: debug
-      name: Debug
-      action: debug:log
+    - id: template
+      name: Fetch Cluster claim template
+      action: fetch:template
       input:
-        message: "This is a scaffold step"
+        url: ./skeleton
+        targetPath: demo/clusters/
+        values:
+          cluster_id: ${{ parameters.cluster_id }}
+    - id: publish
+      name: Publish
+      action: publish:github:pull-request
+      input:
+        allowedHosts: ['github.com']
+        title: EKS Request
+        description: New cluster, please
+        repoUrl: github.com?repo=back-stack&owner=opendev-ie
+        branchName: eks-claim
   output:
     text:
       - title: More Information
