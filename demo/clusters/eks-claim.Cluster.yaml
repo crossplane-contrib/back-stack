@@ -1,0 +1,15 @@
+apiVersion: aws.caas.upbound.io/v1alpha1
+kind: Cluster
+metadata:
+  name: eks-claim
+  namespace: default
+spec:
+  parameters:
+    id: eks-claim
+    region: eu-west-1
+    version: "1.28"
+    nodes:
+      count: 3
+      size: small
+  writeConnectionSecretToRef:
+    name: eks-claim-kubeconfig
