@@ -1,6 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  annotations: 
+    backstage.io/kubernetes-id: argocd-service
   name: argocd
   description: Gitops Platform
 spec:
