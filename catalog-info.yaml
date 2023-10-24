@@ -7,3 +7,4 @@ spec:
   targets:
     - ./backstage/catalog/system.yaml
     - ./backstage/catalog/components.yaml
+    - ./backstage/catalog/templates.yaml
