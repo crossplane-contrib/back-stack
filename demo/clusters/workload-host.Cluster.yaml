@@ -1,0 +1,15 @@
+apiVersion: aws.caas.upbound.io/v1alpha1
+kind: Cluster
+metadata:
+  name: workload-host
+  namespace: default
+spec:
+  parameters:
+    id: workload-host
+    region: eu-west-1
+    version: "1.28"
+    nodes:
+      count: 3
+      size: small
+  writeConnectionSecretToRef:
+    name: workload-host-kubeconfig
