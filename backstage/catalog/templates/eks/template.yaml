@@ -1,0 +1,31 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: eks
+  title: EKS Cluster
+  description: Create an EKS Cluster to host workloads
+  tags:
+    - caas
+    - eks
+spec:
+  owner: infrastructure
+  type: service
+  parameters:
+    - title: Provide some simple information
+      required:
+        - cluster_id
+        - owner
+      properties:
+        cluster_id:
+          title: Name
+          type: string
+          description: Unique name of the component
+          ui:field: EntityNamePicker
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
