@@ -29,3 +29,13 @@ spec:
           ui:options:
             allowedKinds:
               - Group
+  steps:
+    - id: debug
+      name: Debug
+      action: debug:log
+      input:
+        message: "This is a scaffold step"
+  output:
+    text:
+      - title: More Information
+        content: "Your cluster is ready"
