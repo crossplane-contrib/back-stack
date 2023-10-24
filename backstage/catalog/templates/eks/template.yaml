@@ -59,7 +59,7 @@ spec:
       input:
         allowedHosts: ['github.com']
         title: Request for new cluster 
-        descripton: |
+        description: |
           Cluster ID: ${{ parameters.cluster_id }}
         repoUrl: ${{ parameters.repo_url }} 
         branchName: ${{ parameters.pull_request_branch_name }}
