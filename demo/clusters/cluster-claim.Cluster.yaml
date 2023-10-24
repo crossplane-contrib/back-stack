@@ -1,0 +1,15 @@
+apiVersion: aws.caas.upbound.io/v1alpha1
+kind: Cluster
+metadata:
+  name: cluster-claim
+  namespace: default
+spec:
+  parameters:
+    id: cluster-claim
+    region: eu-west-1
+    version: "1.28"
+    nodes:
+      count: 3
+      size: small
+  writeConnectionSecretToRef:
+    name: cluster-claim-kubeconfig
