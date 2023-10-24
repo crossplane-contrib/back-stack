@@ -29,6 +29,17 @@ spec:
           ui:options:
             allowedKinds:
               - Group
+    - title: Destination
+      required:
+        - repo_url
+      properties:
+        repo_url:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
   steps:
     - id: template
       name: Fetch Cluster claim template
@@ -44,8 +55,8 @@ spec:
       input:
         allowedHosts: ['github.com']
         title: EKS Request
-        description: New cluster, please
-        repoUrl: github.com?repo=back-stack&owner=opendev-ie
+        descripton: New cluster, please
+        repoUrl: ${{ parameters.repo_url }} 
         branchName: eks-claim
   output:
     text:
