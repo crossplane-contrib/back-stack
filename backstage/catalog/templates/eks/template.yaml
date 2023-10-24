@@ -11,15 +11,15 @@ spec:
   owner: infrastructure
   type: service
   parameters:
-    - title: Provide some simple information
+    - title: Cluster Parameters
       required:
         - cluster_id
         - owner
       properties:
         cluster_id:
-          title: Name
+          title: Cluster Id
           type: string
-          description: Unique name of the component
+          description: ID of this Cluster that other objects will use to refer to it
           ui:field: EntityNamePicker
         owner:
           title: Owner
