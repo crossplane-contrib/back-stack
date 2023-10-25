@@ -1,0 +1,15 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: AKSCluster
+metadata:
+  name: ${{ values.cluster_id }}
+  namespace: default
+spec:
+  parameters:
+    id: ${{ values.cluster_id }}
+    region: ${{ values.region }}
+    version: ${{ values.version }}
+    nodes:
+      count: ${{ values.nodes_count }}
+      instanceType: ${{ values.nodes_instance_type }}
+  writeConnectionSecretToRef:
+    name: ${{ values.cluster_id }}-kubeconfig
