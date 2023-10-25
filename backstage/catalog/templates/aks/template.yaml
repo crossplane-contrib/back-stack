@@ -9,7 +9,7 @@ metadata:
     - aks
 spec:
   owner: infrastructure
-  type: service
+  type: resource
   parameters:
     - title: Cluster Configuration Parameters
       required:
@@ -64,7 +64,7 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
-        targetPath: demo/clusters/${{ parameters.cluster_id }}
+        targetPath: demo/clusters
         values:
           cluster_id: ${{ parameters.cluster_id }}
           region: ${{ parameters.region }}

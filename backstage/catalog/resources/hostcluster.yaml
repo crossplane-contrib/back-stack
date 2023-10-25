@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: hostcluster
+  annotations:
+    kubernetes.io/api-server: https://kubernetes.default.svc
+    kubernetes.io/auth-provider: serviceAccount
+    kubernetes.io/skip-metrics-lookup: 'true'
+
+spec:
+  type: kubernetes-cluster
+  system: back-stack
+  owner: infrastructure

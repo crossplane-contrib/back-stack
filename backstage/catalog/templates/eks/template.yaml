@@ -9,7 +9,7 @@ metadata:
     - eks
 spec:
   owner: infrastructure
-  type: service
+  type: resource
   parameters:
     - title: Cluster Configuration Parameters
       required:
@@ -62,11 +62,11 @@ spec:
           default: new-cluster-request
   steps:
     - id: template
-      name: Fetch Cluster claim template
+      name: Fetch cluster claim template
       action: fetch:template
       input:
         url: ./skeleton
-        targetPath: demo/clusters/
+        targetPath: demo/clusters
         values:
           cluster_id: ${{ parameters.cluster_id }}
           region: ${{ parameters.region }}

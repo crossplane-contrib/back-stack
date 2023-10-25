@@ -1,5 +1,5 @@
 apiVersion: backstack.cncf.io/v1alpha1
-kind: Cluster
+kind: EKSCluster
 metadata:
   name: ${{ values.cluster_id }}
   namespace: default
