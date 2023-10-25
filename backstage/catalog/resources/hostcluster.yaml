@@ -4,7 +4,7 @@ metadata:
   name: hostcluster
   annotations:
     kubernetes.io/api-server: https://kubernetes.default.svc
-    kubernetes.io/api-server-ca: 'whatisthis'
+    kubernetes.io/api-server-certificate-authority: ''
     kubernetes.io/auth-provider: serviceAccount
     kubernetes.io/skip-metrics-lookup: 'true'
 
