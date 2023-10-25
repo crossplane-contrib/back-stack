@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: eks
+  name: aks
   title: New Cluster (AKS)
   description: Request an AKS Cluster to host workloads
   tags:
