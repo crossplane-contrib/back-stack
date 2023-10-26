@@ -71,14 +71,20 @@ spec:
           version: ${{ parameters.version }}
           nodes_count: ${{ parameters.nodes_count }}
           nodes_instance_type: ${{ parameters.nodes_instance_type }}
-    - id: template-catalog
-      name: Fetch catalog-info template
-      action: fetch:template
+    - id: catalog-info
+      name: Write catalog-info
+      action: catalog:write
       input: 
-        url: ../catalog-info
-        targetPath: demo/clusters/${{ parameters.cluster_id }}
-        values: 
-          cluster_id: ${{ parameters.cluster_id }}
+        filePath: demo/clusters/${{ parameters.cluster_id }}/catalog-info.yaml
+        entity:
+          apiVersion: backstage.io/v1alpha1
+          kind: Resource
+          metadata:
+            name: ${{ parameters.cluster_id }}
+          spec:
+            type: kubernetes-cluster
+            system: back-stack
+            owner: infrastructure
     - id: publish
       name: Publish
       action: publish:github:pull-request
@@ -92,6 +98,12 @@ spec:
           Nodes:      ${{ parameters.nodes_instance_type }} (${{ parameters.nodes_count }})
         repoUrl: ${{ parameters.repo_url }} 
         branchName: ${{ parameters.pull_request_branch_name }}
+    - id: register
+      name: Register the cluster
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
   output:
     text:
       - title: Accept Pull Request
