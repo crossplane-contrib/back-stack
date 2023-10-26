@@ -75,7 +75,7 @@ spec:
       name: Fetch catalog-info template
       action: fetch:template
       input: 
-        url: ../catalog-info.yaml
+        url: ../catalog-info
         targetPath: demo/clusters/${{ parameters.cluster_id }}
         values: 
           cluster_id: ${{ parameters.cluster_id }}
