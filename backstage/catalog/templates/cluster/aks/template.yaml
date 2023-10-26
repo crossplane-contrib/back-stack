@@ -59,18 +59,26 @@ spec:
           type: string
           default: new-cluster-request
   steps:
-    - id: template
+    - id: template-cluster
       name: Fetch cluster claim template
       action: fetch:template
       input:
         url: ./skeleton
-        targetPath: demo/clusters
+        targetPath: demo/clusters/${{ parameters.cluster_id }}
         values:
           cluster_id: ${{ parameters.cluster_id }}
           region: ${{ parameters.region }}
           version: ${{ parameters.version }}
           nodes_count: ${{ parameters.nodes_count }}
           nodes_instance_type: ${{ parameters.nodes_instance_type }}
+    - id: template-catalog
+      name: Fetch catalog-info template
+      action: fetch:template
+      input: 
+        url: ../catalog-info.yaml
+        targetPath: demo/clusters/${{ parameters.cluster_id }}
+        values: 
+          cluster_id: ${{ parameters.cluster_id }}
     - id: publish
       name: Publish
       action: publish:github:pull-request

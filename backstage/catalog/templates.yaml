@@ -5,5 +5,5 @@ metadata:
   description: A collection of all templates
 spec:
   targets:
-    - ./templates/eks/template.yaml
-    - ./templates/aks/template.yaml
+    - ./templates/cluster/eks/template.yaml
+    - ./templates/cluster/aks/template.yaml
