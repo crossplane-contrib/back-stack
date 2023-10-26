@@ -1,0 +1,8 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: aks-claim
+spec:
+  type: kubernetes-cluster
+  system: back-stack
+  owner: infrastructure
