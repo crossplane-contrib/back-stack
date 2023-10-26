@@ -1,0 +1,68 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xaks.azure.backstack.cncf.io
+spec:
+  group: azure.backstack.cncf.io
+  names:
+    kind: XAKS
+    plural: xaks
+  connectionSecretKeys:
+  - kubeconfig
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              parameters:
+                type: object
+                description: AKS configuration parameters.
+                properties:
+                  id:
+                    type: string
+                    description: ID of this Cluster that other objects will use to refer to it.
+                  region:
+                    type: string
+                    description: Region is the region you'd like your resource to be created in.
+                  version:
+                    description: Kubernetes version
+                    type: string
+                    enum:
+                    - "1.27.3"
+                    - "1.26.6"
+                    - "1.25.11"
+                    default: "1.27.3"
+                  nodes:
+                    type: object
+                    description: AKS node configuration parameters.
+                    properties:
+                      count:
+                        type: integer
+                        description: Desired node count
+                      instanceType:
+                        type: string
+                        description: instance types associated with the Node Group.
+                        default: Standard_B2s
+                    required:
+                    - count
+                    - instanceType
+                required:
+                - id
+                - region
+                - nodes
+            required:
+            - parameters
+          status:
+            description: A Status represents the observed state
+            properties:
+              aks:
+                description: Freeform field containing status information for aks
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+            type: object

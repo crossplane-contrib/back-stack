@@ -2,4 +2,11 @@ apiVersion: backstack.cncf.io/v1alpha1
 kind: Hub
 metadata:
   name: hub
-spec: {}
+spec: 
+  parameters:
+    clusterId: local
+    repository: https://github.com/opendev-ie/back-stack
+    backstage:
+      host: backstage-7f000001.nip.io
+    argocd:
+      host: argocd-7f000001.nip.io

@@ -1,0 +1,44 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xaksclusters.backstack.cncf.io
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion: backstack.cncf.io/v1alpha1
+    kind: XAKSCluster
+  resources:
+    - base:
+        apiVersion: azure.backstack.cncf.io/v1alpha1
+        kind: XNetwork
+      patches:
+        - fromFieldPath: spec.parameters.id
+          toFieldPath: spec.parameters.id
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.parameters.region
+        - fromFieldPath: spec.parameters.networkSelector
+          toFieldPath: spec.compositionSelector.matchLabels[type]
+    - base:
+        apiVersion: azure.backstack.cncf.io/v1alpha1
+        kind: XAKS
+      connectionDetails:
+        - fromConnectionSecretKey: kubeconfig
+      patches:
+        - fromFieldPath: spec.parameters.id
+          toFieldPath: spec.parameters.id
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.parameters.region
+        - fromFieldPath: metadata.uid
+          toFieldPath: spec.writeConnectionSecretToRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-aks"
+        - fromFieldPath: spec.writeConnectionSecretToRef.namespace
+          toFieldPath: spec.writeConnectionSecretToRef.namespace
+        - fromFieldPath: spec.parameters.version
+          toFieldPath: spec.parameters.version
+        - fromFieldPath: spec.parameters.nodes.count
+          toFieldPath: spec.parameters.nodes.count
+        - fromFieldPath: spec.parameters.nodes.instanceType
+          toFieldPath: spec.parameters.nodes.instanceType

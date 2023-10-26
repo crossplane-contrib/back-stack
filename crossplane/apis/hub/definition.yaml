@@ -17,8 +17,37 @@ spec:
     schema:
       openAPIV3Schema:
         type: object
+        description: A BACK stack hub installs Backstage, Argo, and Kyverno and connects them all together with Crossplane
         properties:
           spec:
             type: object
-            properties: {}
-                              
+            description: Specification of the desired state of the Hub
+            properties: 
+              parameters:
+                type: object
+                description: Input parameters for provisioning a Hub
+                properties:
+                  clusterId:
+                    type: string
+                    description: ID of the target cluster for the BACK stack. There should be helm and kubernetes ProviderConfigs of the same name present in the control plane.
+                  repository:
+                    type: string
+                    description: The URL of the git repository where claims will be synchronized 
+                  backstage:
+                    type: object
+                    description: Configuration for the Backstage deployment
+                    properties:
+                      host:
+                        type: string
+                        description: Ingress URL for Backstage
+                  argocd:
+                    type: object
+                    description: Configuration for the ArgoCD deployment
+                    properties:
+                      host: 
+                        type: string
+                        description: Ingress URL for ArgoCD
+          status:
+            type: object
+            description: Observed status of the Hub
+                                  

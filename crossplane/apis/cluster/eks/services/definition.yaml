@@ -1,0 +1,78 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xservices.aws.caas.upbound.io
+spec:
+  group: aws.caas.upbound.io
+  names:
+    kind: XServices
+    plural: xservices
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              deletionPolicy:
+                description: When the Composition is deleted, delete the AWS resources. Defaults to Delete
+                enum:
+                - Delete
+                - Orphan
+                type: string
+                default: Delete
+              gitops:
+                type: object
+                description: GitOps configure external gitops system for mcp controlplane
+                properties:
+                  url:
+                    type: string
+                    description: Url for GitOps Sync.
+                  path:
+                    type: string
+                    description: path in Repo for GitOps Sync.
+                  kubeConfigSecretRef:
+                    type: object
+                    description: location for kubeconfig mcp controlplane
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the secret.
+                      namespace:
+                        type: string
+                        description: Namespace of the secret.
+                    required:
+                    - name
+                    - namespace
+                required:
+                - url
+              operators:
+                type: object
+                description: Configuration for operators.
+                properties:
+                  flux:
+                    type: object
+                    description: Configuration for the Flux GitOps operator.
+                    properties:
+                      version:
+                        type: string
+                        description: Flux operator version to run.
+                        default: "2.9.2"
+              providerConfigRef:
+                type: object
+                description: "A reference to the ProviderConfig of the cluster that services should be deployed to."
+                properties:
+                  name:
+                    type: string
+                    description: "Name of the Kubernetes provider configuration.
+                      This will typically be the name of the cluster with a
+                      five character suffix appended."
+                required:
+                - name
+            required:
+            - providerConfigRef
+            - deletionPolicy

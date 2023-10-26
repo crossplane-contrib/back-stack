@@ -1,0 +1,75 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xnetworks.azure.backstack.cncf.io
+  labels:
+    provider: azure
+    type: basic
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion: azure.backstack.cncf.io/v1alpha1
+    kind: XNetwork
+  patchSets:
+  - name: network-id
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.id
+      toFieldPath: metadata.labels[azure.caas.upbound.io/network-id]
+  - name: region
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.region
+      toFieldPath: spec.forProvider.location
+  resources:
+  - name: resource-group
+    base:
+      apiVersion: azure.upbound.io/v1beta1
+      kind: ResourceGroup
+    patches:
+    - type: PatchSet
+      patchSetName: network-id
+    - type: PatchSet
+      patchSetName: region
+  - name: virtual-network
+    base:
+      apiVersion: network.azure.upbound.io/v1beta1
+      kind: VirtualNetwork
+      spec:
+        forProvider:
+          resourceGroupNameSelector:
+            matchControllerRef: true
+          addressSpace:
+          - 192.168.0.0/16
+    patches:
+    - type: PatchSet
+      patchSetName: network-id
+    - type: PatchSet
+      patchSetName: region
+    - fromFieldPath: spec.parameters.id
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-vnet"
+  - name: subnet
+    base:
+      apiVersion: network.azure.upbound.io/v1beta1
+      kind: Subnet
+      spec:
+        forProvider:
+          resourceGroupNameSelector:
+            matchControllerRef: true
+          virtualNetworkNameSelector:
+            matchControllerRef: true
+          addressPrefixes:
+          - 192.168.1.0/24
+    patches:
+    - type: PatchSet
+      patchSetName: network-id
+    - fromFieldPath: spec.parameters.id
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-sn"
