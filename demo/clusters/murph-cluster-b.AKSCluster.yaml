@@ -6,7 +6,7 @@ metadata:
 spec:
   parameters:
     id: murph-cluster-b
-    region: West Europe
+    region: North Europe
     version: 1.27.3
     nodes:
       count: 3
