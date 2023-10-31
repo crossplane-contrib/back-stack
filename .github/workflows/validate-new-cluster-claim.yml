@@ -1,0 +1,30 @@
+name: Validate cluster claim workflow
+
+on:
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'demo/clusters/*.yaml'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job to generate the cluster claim yaml
+  validate-cluster-yaml:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - name: Checkout template
+      uses: actions/checkout@v2
+
+    - name: Install Kyverno CLI
+      uses: kyverno/action-install-cli@v0.2.0
+
+    - name: Check Kyverno install
+      run: kyverno version
+
+    - name: Validate cluster claim
+      run: |
+        kyverno apply ./kyverno/policies/crossplane -b main  --resource=./demo/clusters
