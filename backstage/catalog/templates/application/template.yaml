@@ -1,0 +1,52 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: application
+  title: New Application Deployment
+  description: Request an AKS Cluster to host workloads
+  tags:
+    - caas
+    - aks
+spec:
+  owner: infrastructure
+  type: resource
+  parameters:
+    - title: Cluster Configuration Parameters
+      required:
+        - cluster_id
+        - region
+      properties:
+        cluster_id:
+          title: Cluster ID
+          type: string
+          description: ID of this Cluster that other objects will use to refer to it.
+          ui:field: EntityPicker
+    - title: Destination
+      required:
+        - repo_url
+      properties:
+        repo_url:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+        pull_request_branch_name:
+          title: Branch name for Pull Request
+          type: string
+          default: new-cluster-request
+  steps:
+    - id: template-cluster
+      name: Fetch cluster claim template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        targetPath: demo/applications
+        values:
+          cluster_id: ${{ parameters.cluster_id }}
+  output:
+    text:
+      - title: Accept Pull Request
+        content: |
+          Your New Application Request has been published to GitHub

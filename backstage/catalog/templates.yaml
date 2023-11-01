@@ -7,3 +7,4 @@ spec:
   targets:
     - ./templates/cluster/eks/template.yaml
     - ./templates/cluster/aks/template.yaml
+    - ./templates/application/template.yaml
