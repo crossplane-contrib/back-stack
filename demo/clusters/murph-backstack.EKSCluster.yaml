@@ -1,0 +1,17 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: EKSCluster
+metadata:
+  name: murph-backstack
+  namespace: default
+spec:
+  parameters:
+    id: murph-backstack
+    region: eu-west-1
+    iam:
+      roleArn: arn:aws:iam::609897127049:role/AWSReservedSSO_Half-Day-AdminAccess_365e085e478bce0c
+    version: 1.28
+    nodes:
+      count: 3
+      instanceType: t3.small
+  writeConnectionSecretToRef:
+    name: murph-backstack-kubeconfig
