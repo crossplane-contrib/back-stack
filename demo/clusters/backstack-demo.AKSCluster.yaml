@@ -1,0 +1,15 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: AKSCluster
+metadata:
+  name: backstack-demo
+  namespace: default
+spec:
+  parameters:
+    id: backstack-demo
+    region: West Europe
+    version: 1.27.3
+    nodes:
+      count: 3
+      instanceType: Standard_DS2_v2
+  writeConnectionSecretToRef:
+    name: backstack-demo-kubeconfig
