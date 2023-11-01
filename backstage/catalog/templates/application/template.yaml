@@ -19,8 +19,12 @@ spec:
         cluster_id:
           title: Cluster ID
           type: string
-          description: ID of this Cluster that other objects will use to refer to it.
+          description: ID of the Cluster to target for deployment
           ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              - kind: Resource
+                spec.type: kubernetes-cluster
     - title: Destination
       required:
         - repo_url
