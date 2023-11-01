@@ -24,6 +24,10 @@ spec:
           title: Region
           type: string
           description: Region is the region you'd like your resource to be created in.
+        iam_role_arn:
+          title: IAM Role ARN
+          type: string
+          description: The IAM Role ARN to connect as ClusterAdmin.
         version:
           title: Version
           type: string
@@ -71,6 +75,7 @@ spec:
           cluster_id: ${{ parameters.cluster_id }}
           region: ${{ parameters.region }}
           version: ${{ parameters.version }}
+          iam_role_arn: ${{ parameters.iam_role_arn }}
           nodes_count: ${{ parameters.nodes_count }}
           nodes_instance_type: ${{ parameters.nodes_instance_type }}
     - id: publish

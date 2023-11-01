@@ -3,18 +3,17 @@ kind: Template
 metadata:
   name: application
   title: New Application Deployment
-  description: Request an AKS Cluster to host workloads
+  description: Deploy an application to a registered cluster
   tags:
-    - caas
-    - aks
+    - argocd
+    - xks
 spec:
   owner: infrastructure
-  type: resource
+  type: component
   parameters:
-    - title: Cluster Configuration Parameters
+    - title: Deployment Configuration Parameters
       required:
         - cluster_id
-        - region
       properties:
         cluster_id:
           title: Cluster ID
@@ -48,7 +47,7 @@ spec:
         url: ./skeleton
         targetPath: demo/applications
         values:
-          cluster_id: ${{ parameters.cluster_id }}
+          cluster_id: ${{ parameters.cluster_id | parseEntityRef | pick('name') }}
   output:
     text:
       - title: Accept Pull Request
