@@ -9,7 +9,7 @@ spec:
     region: ${{ values.region }}
     iam:
       roleArn: ${{ values.iam_role_arn}}
-    version: ${{ values.version }}
+    version: "${{ values.version }}"
     nodes:
       count: ${{ values.nodes_count }}
       instanceType: ${{ values.nodes_instance_type }}
