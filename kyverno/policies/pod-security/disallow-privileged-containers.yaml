@@ -1,0 +1,39 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-privileged-containers
+  annotations:
+    policies.kyverno.io/title: Disallow Privileged Containers
+    policies.kyverno.io/category: Pod Security Standards (Baseline)
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    kyverno.io/kyverno-version: 1.6.0
+    kyverno.io/kubernetes-version: "1.22-1.23"
+    policies.nirmata.io/remediation: "https://docs.nirmata.io/policysets/podsecurity/baseline/disallow-privileged-containers/"
+    policies.kyverno.io/description: >-
+      Privileged mode disables most security mechanisms and must not be allowed. This policy
+      ensures the fields spec.containers[*].securityContext.privileged and spec.initContainers[*].securityContext.privileged must be unset or set to `false`.
+spec:
+  validationFailureAction: audit
+  background: true
+  rules:
+    - name: privileged-containers
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      validate:
+        message: >-
+          Privileged mode is disallowed. (CCI-002235)
+        pattern:
+          spec:
+            =(ephemeralContainers):
+              - =(securityContext):
+                  =(privileged): "false"
+            =(initContainers):
+              - =(securityContext):
+                  =(privileged): "false"
+            containers:
+              - =(securityContext):
+                  =(privileged): "false"

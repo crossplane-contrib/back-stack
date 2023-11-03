@@ -1,0 +1,31 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restric-privileged-port
+  annotations:
+    policies.kyverno.io/title: Restrict Privileged Ports
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: medium
+    kyverno.io/kyverno-version: 1.7.2
+    kyverno.io/kubernetes-version: "1.23"
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Privileged ports should not be used. Use port number greater than 1024 
+spec:
+  validationFailureAction: audit
+  background: true
+  rules:
+    - name: check-privileged-ports
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      validate:
+        message: Privileged ports should not be used. (CCI-0017620)
+        pattern:
+          spec:
+            containers:
+            - name: "*"
+              =(ports):
+              - containerPort: ">=1024"
