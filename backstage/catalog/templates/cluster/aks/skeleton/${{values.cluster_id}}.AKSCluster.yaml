@@ -11,7 +11,9 @@ spec:
     nodes:
       count: ${{ values.nodes_count }}
       instanceType: ${{ values.nodes_instance_type }}
-  publishConnectionDetailsTo:
+  writeConnectionSecretToRef:
     name: ${{ values.cluster_id }}-kubeconfig
+  publishConnectionDetailsTo:
+    name: ${{ values.cluster_id }}/${{ values.cluster_id }}-kubeconfig
     configRef:
       name: vault
