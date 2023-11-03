@@ -11,7 +11,9 @@ spec:
     nodes:
       count: 3
       instanceType: Standard_B2s
-  publishConnectionDetailsTo:
+  writeConnectionSecretToRef:
     name: backstack-vault-2-kubeconfig
+  publishConnectionDetailsTo:
+    name: backstack-vault-2/backstack-vault-2-kubeconfig
     configRef:
       name: vault
