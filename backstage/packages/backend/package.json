@@ -34,11 +34,13 @@
     "@backstage/plugin-search-backend-module-pg": "^0.5.15",
     "@backstage/plugin-search-backend-node": "^1.2.10",
     "@backstage/plugin-techdocs-backend": "^1.8.0",
+    "@backstage/plugin-vault-backend": "^0.3.11",
     "app": "link:../app",
     "better-sqlite3": "^8.0.0",
     "dockerode": "^3.3.1",
     "express": "^4.17.1",
     "express-promise-router": "^4.1.0",
+    "fs-extra": "^11.1.1",
     "pg": "^8.3.0",
     "winston": "^3.2.1"
   },
@@ -47,6 +49,7 @@
     "@types/dockerode": "^3.3.0",
     "@types/express": "^4.17.6",
     "@types/express-serve-static-core": "^4.17.5",
+    "@types/fs-extra": "^11.0.3",
     "@types/luxon": "^2.0.4"
   },
   "files": [

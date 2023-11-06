@@ -3620,6 +3620,43 @@
     react-use "^17.2.4"
     zen-observable "^0.10.0"
 
+"@backstage/plugin-vault-backend@^0.3.11":
+  version "0.3.11"
+  resolved "https://registry.yarnpkg.com/@backstage/plugin-vault-backend/-/plugin-vault-backend-0.3.11.tgz#85d42de4dbb1aaec69769611867685179c831729"
+  integrity sha512-AG+HmcoywvPOzU0xQNqZy/00IGIoEYBt7RZOlElqYoob5DgFuT+pR83ilKf0RpN8J1PFr2hzmOQBfDtEuOrtjA==
+  dependencies:
+    "@backstage/backend-common" "^0.19.8"
+    "@backstage/backend-tasks" "^0.5.11"
+    "@backstage/config" "^1.1.1"
+    "@backstage/errors" "^1.2.3"
+    "@types/express" "*"
+    compression "^1.7.4"
+    cors "^2.8.5"
+    express "^4.17.1"
+    express-promise-router "^4.1.0"
+    helmet "^6.0.0"
+    node-fetch "^2.6.7"
+    p-limit "^3.1.0"
+    winston "^3.2.1"
+    yn "^5.0.0"
+
+"@backstage/plugin-vault@^0.1.20":
+  version "0.1.20"
+  resolved "https://registry.yarnpkg.com/@backstage/plugin-vault/-/plugin-vault-0.1.20.tgz#e6d42486a35c0e32c23986e8085ad4b1d48b2b1b"
+  integrity sha512-ikzHbJdKgxUqaEn8IIaV07LvBDPu/PwSju2Y1F+q5g/JpAH0L8qI/EwC5Q5ZOwyfvaCpz+ySwChpMMY9TEmiWw==
+  dependencies:
+    "@backstage/catalog-model" "^1.4.3"
+    "@backstage/core-components" "^0.13.6"
+    "@backstage/core-plugin-api" "^1.7.0"
+    "@backstage/errors" "^1.2.3"
+    "@backstage/plugin-catalog-react" "^1.8.5"
+    "@backstage/theme" "^0.4.3"
+    "@material-ui/core" "^4.12.2"
+    "@material-ui/icons" "^4.9.1"
+    "@material-ui/lab" "4.0.0-alpha.61"
+    "@types/react" "^16.13.1 || ^17.0.0"
+    react-use "^17.2.4"
+
 "@backstage/release-manifests@^0.0.10":
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/@backstage/release-manifests/-/release-manifests-0.0.10.tgz#10f0c23cd1a00ca9b2ac5bf5c199592ba0abedae"
@@ -7708,6 +7745,14 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/fs-extra@^11.0.3":
+  version "11.0.3"
+  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-11.0.3.tgz#72c3a247c8dd5703c93d900c584e006476146866"
+  integrity sha512-sF59BlXtUdzEAL1u0MSvuzWd7PdZvZEtnaVkzX5mjpdWTJ8brG0jUqve3jPCzSzvAKKMHTG8F8o/WMQLtleZdQ==
+  dependencies:
+    "@types/jsonfile" "*"
+    "@types/node" "*"
+
 "@types/geojson@*":
   version "7946.0.12"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.12.tgz#0307536218d32e6b970bccd1d148b9c4e5b6f10d"
@@ -7829,6 +7874,13 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/jsonfile@*":
+  version "6.1.3"
+  resolved "https://registry.yarnpkg.com/@types/jsonfile/-/jsonfile-6.1.3.tgz#683d447b413119393e913ecd414a2bc0e5d0f4b9"
+  integrity sha512-/yqTk2SZ1wIezK0hiRZD7RuSf4B3whFxFamB1kGStv+8zlWScTMcHanzfc0XKWs5vA1TkHeckBlOyM8jxU8nHA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/jsonwebtoken@^9.0.0":
   version "9.0.4"
@@ -8883,7 +8935,9 @@ anymatch@^3.0.3, anymatch@~3.1.2:
     "@backstage/plugin-techdocs-module-addons-contrib" "^1.1.1"
     "@backstage/plugin-techdocs-react" "^1.1.12"
     "@backstage/plugin-user-settings" "^0.7.11"
+    "@backstage/plugin-vault" "^0.1.20"
     "@backstage/theme" "^0.4.3"
+    "@janus-idp/backstage-plugin-topology" "^1.15.9"
     "@material-ui/core" "^4.12.2"
     "@material-ui/icons" "^4.9.1"
     history "^5.0.0"
@@ -23493,6 +23547,11 @@ yn@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/yn/-/yn-4.0.0.tgz#611480051ea43b510da1dfdbe177ed159f00a979"
   integrity sha512-huWiiCS4TxKc4SfgmTwW1K7JmXPPAmuXWYy4j9qjQo4+27Kni8mGhAAi1cloRWmBe2EqcLgt3IGqQoRL/MtPgg==
+
+yn@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/yn/-/yn-5.0.0.tgz#63fc2e2e0056cf294397eed6ad4a3fbdf707f26f"
+  integrity sha512-+l37+9TyGEsyxGLaTg6QgYy5KnOp74ZZl4dPFLQpBWSkO99uBC5jnS0pOGwXFViPbiaEtWbParH2KrgWWF2duQ==
 
 yocto-queue@^0.1.0:
   version "0.1.0"

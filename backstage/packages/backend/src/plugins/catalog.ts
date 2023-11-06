@@ -8,7 +8,7 @@ export default async function createPlugin(
   env: PluginEnvironment,
 ): Promise<Router> {
   const builder = await CatalogBuilder.create(env);
-  const crossplane = new CrossplaneProvider();
+  const crossplane = new CrossplaneProvider(env);
   builder.addEntityProvider(crossplane);
   builder.addProcessor(new ScaffolderEntitiesProcessor());
   const { processingEngine, router } = await builder.build();
