@@ -1,0 +1,21 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: EKSCluster
+metadata:
+  name: booth-demo-eks
+  namespace: default
+spec:
+  parameters:
+    id: booth-demo-eks
+    region: us-east-1
+    iam:
+      roleArn: arn:aws:iam::609897127049:role/AWSReservedSSO_Half-Day-AdminAccess_365e085e478bce0c
+    version: "1.28"
+    nodes:
+      count: 3
+      instanceType: t3.small
+  writeConnectionSecretToRef:
+    name: booth-demo-eks-kubeconfig
+  publishConnectionDetailsTo:
+    name: booth-demo-eks/booth-demo-eks-kubeconfig
+    configRef:
+      name: vault
