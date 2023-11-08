@@ -13,8 +13,26 @@ spec:
   parameters:
     - title: Deployment Configuration Parameters
       required:
+        - name
+        - application_source
         - cluster_id
       properties:
+        name:
+          title: Application Name
+          type: string
+          description: The name of the application to deploy
+        application_source:
+          title: Application Source
+          type: string
+          description: The source repository of the application to deploy
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+        application_source_path:
+          title: Application Source Path
+          type: string
+          description: Path within the source repository where the application is found
         cluster_id:
           title: Cluster ID
           type: string
@@ -38,16 +56,32 @@ spec:
         pull_request_branch_name:
           title: Branch name for Pull Request
           type: string
-          default: new-cluster-request
+          default: new-application-request
   steps:
-    - id: template-cluster
-      name: Fetch cluster claim template
+    - id: template-application
+      name: Fetch application claim template
       action: fetch:template
       input:
         url: ./skeleton
         targetPath: demo/applications
         values:
           cluster_id: ${{ parameters.cluster_id | parseEntityRef | pick('name') }}
+          application_name: ${{ parameters.name }}
+          application_source_host: ${{ parameters.application_source | parseRepoUrl | pick('host') }}
+          application_source_organization: ${{ parameters.application_source | parseRepoUrl | pick('organization') }}
+          application_source_repo: ${{ parameters.application_source | parseRepoUrl | pick('repo') }}
+          application_source_path: ${{ parameters.application_source_path }}
+    - id: publish
+      name: Publish
+      action: publish:github:pull-request
+      input:
+        allowedHosts: ['github.com']
+        title: Request for new application deployment 
+        description: |
+          Application Source: ${{ parameters.application_source }}
+          Cluster ID: ${{ parameters.cluster_id }}
+        repoUrl: ${{ parameters.repo_url }} 
+        branchName: ${{ parameters.pull_request_branch_name }}
   output:
     text:
       - title: Accept Pull Request
