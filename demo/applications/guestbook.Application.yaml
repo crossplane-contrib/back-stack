@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://argoproj/argocd-example-apps
+    repoURL: https://github.com/argoproj/argocd-example-apps
     path: /helm-guestbook
     targetRevision: HEAD
   destination: 
