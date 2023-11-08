@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/argoproj/argocd-example-apps
-    path: /helm-guestbook
+    path: helm-guestbook
     targetRevision: HEAD
   destination: 
     name: backstack-vault-2
