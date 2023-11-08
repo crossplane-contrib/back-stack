@@ -7,10 +7,13 @@ waitfor() {
 
   echo "Waiting for $type $*"
   # wait for resource to exist. See: https://github.com/kubernetes/kubernetes/issues/83242
+  COUNT=0
   until kubectl -n "$ns" get "$type" "$@" -o=jsonpath='{.items[0].metadata.name}' >/dev/null 2>&1; do
-    echo "Waiting for $type $*"
+    echo -e "\r\033[1A\033[0KWaiting for $type $* [${COUNT}s]"
     sleep 1
+    ((COUNT++))
   done
+  echo -e "\r\033[1A\033[0KWaiting for $type $* ...found"
   eval "$xtrace"
 }
 
