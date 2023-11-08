@@ -30,9 +30,10 @@ spec:
             allowedHosts:
               - github.com
         application_source_path:
-          title: Application Source Path
+          title: Path
           type: string
           description: Path within the source repository where the application is found
+          default: /
         cluster_id:
           title: Cluster ID
           type: string
@@ -68,7 +69,7 @@ spec:
           cluster_id: ${{ parameters.cluster_id | parseEntityRef | pick('name') }}
           application_name: ${{ parameters.name }}
           application_source_host: ${{ parameters.application_source | parseRepoUrl | pick('host') }}
-          application_source_organization: ${{ parameters.application_source | parseRepoUrl | pick('organization') }}
+          application_source_owner: ${{ parameters.application_source | parseRepoUrl | pick('owner') }}
           application_source_repo: ${{ parameters.application_source | parseRepoUrl | pick('repo') }}
           application_source_path: ${{ parameters.application_source_path }}
     - id: publish
@@ -87,3 +88,5 @@ spec:
       - title: Accept Pull Request
         content: |
           Your New Application Request has been published to GitHub
+
+           To finish deploying the application, review and accept the [pull request](${{ steps['publish'].output.remoteUrl }}) 
