@@ -11,16 +11,6 @@ spec:
     apiVersion: aws.caas.upbound.io/v1alpha1
     kind: XNetwork
   patchSets:
-  - name: providerConfigRef
-    patches:
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.providerConfigName
-      toFieldPath: spec.providerConfigRef.name
-  - name: deletionPolicy
-    patches:
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.deletionPolicy
-      toFieldPath: spec.deletionPolicy
   - name: network-id
     patches:
     - type: FromCompositeFieldPath
@@ -45,10 +35,6 @@ spec:
       name: caas-vcp
       patches:
         - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
-        - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
           patchSetName: region
@@ -63,10 +49,6 @@ spec:
               matchControllerRef: true
       name: gateway
       patches:
-        - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
         - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
@@ -87,10 +69,6 @@ spec:
               kubernetes.io/role/elb: "1"
       name: subnet-public-a
       patches:
-        - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
         - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
@@ -127,10 +105,6 @@ spec:
       name: subnet-public-b
       patches:
         - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
-        - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
           patchSetName: region
@@ -164,10 +138,6 @@ spec:
               kubernetes.io/role/internal-elb: "1"
       name: subnet-private-a
       patches:
-        - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
         - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
@@ -203,10 +173,6 @@ spec:
       name: subnet-private-b
       patches:
         - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
-        - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
           patchSetName: region
@@ -235,10 +201,6 @@ spec:
       name: routeTable
       patches:
         - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
-        - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
           patchSetName: region
@@ -255,10 +217,6 @@ spec:
       name: route
       patches:
         - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
-        - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
           patchSetName: region
@@ -273,10 +231,6 @@ spec:
               matchControllerRef: true
       name: mainRouteTableAssociation
       patches:
-        - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
         - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
@@ -294,10 +248,6 @@ spec:
                 access: public
       name: RouteTableAssociation-public-a
       patches:
-        - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
         - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
@@ -322,10 +272,6 @@ spec:
       name: RouteTableAssociation-public-b
       patches:
         - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
-        - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
           patchSetName: region
@@ -349,10 +295,6 @@ spec:
       name: RouteTableAssociation-private-a
       patches:
         - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
-        - type: PatchSet
           patchSetName: network-id
         - type: PatchSet
           patchSetName: region
@@ -375,10 +317,6 @@ spec:
                 access: private
       name: RouteTableAssociation-private-b
       patches:
-        - type: PatchSet
-          patchSetName: providerConfigRef
-        - type: PatchSet
-          patchSetName: deletionPolicy
         - type: PatchSet
           patchSetName: network-id
         - type: PatchSet

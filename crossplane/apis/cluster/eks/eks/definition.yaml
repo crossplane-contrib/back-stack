@@ -38,30 +38,16 @@ spec:
                         description: The IAM Role ARN to connect as ClusterAdmin.
                         type: string
                         default: roleArn
-                      userArn:
-                        description: The IAM User ARN to connect as ClusterAdmin.
-                        type: string
-                        default: userArn
-                  deletionPolicy:
-                    description: When the Composition is deleted, delete the AWS resources. Defaults to Delete
-                    enum:
-                    - Delete
-                    - Orphan
-                    type: string
-                    default: Delete
-                  providerConfigName:
-                    description: Crossplane ProviderConfig to use for provisioning this resources
-                    type: string
-                    default: default
                   version:
                     description: Kubernetes version 
                     type: string
                     enum:
+                    - "1.28"
                     - "1.27"
                     - "1.26"
                     - "1.25"
                     - "1.24"
-                    default: "1.27"
+                    default: "1.28"
                   subnetIds:
                     type: array
                     items:
@@ -83,8 +69,6 @@ spec:
                 required:
                 - id
                 - region
-                - deletionPolicy
-                - providerConfigName
                 - nodes
                 - subnetIds
             required:

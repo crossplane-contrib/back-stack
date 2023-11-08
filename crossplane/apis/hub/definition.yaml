@@ -47,6 +47,13 @@ spec:
                       host: 
                         type: string
                         description: Ingress URL for ArgoCD
+                  vault:
+                    type: object
+                    description: Configuration for the Vault deployment
+                    properties:
+                      host: 
+                        type: string
+                        description: Ingress URL for Vault
           status:
             type: object
             description: Observed status of the Hub

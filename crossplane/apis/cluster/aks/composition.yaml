@@ -4,11 +4,14 @@ metadata:
   name: xaksclusters.backstack.cncf.io
 spec:
   writeConnectionSecretsToNamespace: crossplane-system
+  publishConnectionDetailsWithStoreConfigRef: 
+    name: vault
   compositeTypeRef:
     apiVersion: backstack.cncf.io/v1alpha1
     kind: XAKSCluster
   resources:
-    - base:
+    - name: network
+      base:
         apiVersion: azure.backstack.cncf.io/v1alpha1
         kind: XNetwork
       patches:
@@ -18,7 +21,8 @@ spec:
           toFieldPath: spec.parameters.region
         - fromFieldPath: spec.parameters.networkSelector
           toFieldPath: spec.compositionSelector.matchLabels[type]
-    - base:
+    - name: cluster
+      base:
         apiVersion: azure.backstack.cncf.io/v1alpha1
         kind: XAKS
       connectionDetails:

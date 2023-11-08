@@ -6,424 +6,653 @@ spec:
   compositeTypeRef:
     apiVersion: backstack.cncf.io/v1alpha1
     kind: XHub
-  patchSets:
-  - name: target-cluster
-    patches:
-    - fromFieldPath: spec.parameters.clusterId
-      toFieldPath: spec.providerConfigRef.name
-  resources:
-  - name: cert-manager
-    base:
-      apiVersion: helm.crossplane.io/v1beta1
-      kind: Release
-      metadata: 
-        annotations:
-          crossplane.io/external-name: cert-manager
-      spec:
-        forProvider:
-          namespace: cert-manager
-          chart:
-            name: cert-manager
-            repository: https://charts.jetstack.io
-            version: v1.13.1
-          values:
-            installCRDs: true
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
-  - name: selfsigned-cluster-issuer
-    base:
-      apiVersion: kubernetes.crossplane.io/v1alpha1
-      kind: Object
-      spec:
-        forProvider:
-          manifest:
-            apiVersion: cert-manager.io/v1
-            kind: ClusterIssuer
-            metadata:
-              name: selfsigned-cluster-issuer
-            spec:
-              selfSigned: {}
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
-  - name: argocd
-    base:
-      apiVersion: helm.crossplane.io/v1beta1
-      kind: Release
-      metadata:
-        annotations:
-          crossplane.io/external-name: argo-cd
-      spec:
-        forProvider:
-          namespace: argocd
-          chart:
-            name: argo-cd
-            repository: https://argoproj.github.io/argo-helm
-          values:
-            configs:
-              params:
-                server.insecure: true
-              cm:
-                application.resourceTrackingMethod: annotation
-            server:
-              deploymentAnnotations:
-                backstage.io/kubernetes-id: argocd-service
-              ingress:
-                enabled: true
-                annotations:
-                  nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-                  nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-                  cert-manager.io/cluster-issuer: selfsigned-cluster-issuer 
-                hosts: 
-                - hostname # patched
-                tls:
-                - hosts: 
-                  - hostname # patched
-                  secretName: argocd-tls
-              ingressGrpc:
-                enabled: true
-                annotations:
-                  nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-                  cert-manager.io/cluster-issuer: selfsigned-cluster-issuer 
-                hosts: 
-                - grpc.hostname # patched
-                tls:
-                - hosts: 
-                  - grpc.hostname # patched
-                  secretName: argocd-grpc-tls
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
-    - fromFieldPath: spec.parameters.argocd.host
-      toFieldPath: spec.forProvider.values.server.ingress.hosts[0]
-    - fromFieldPath: spec.parameters.argocd.host
-      toFieldPath: spec.forProvider.values.server.ingress.tls[0].hosts[0]
-    - fromFieldPath: spec.parameters.argocd.host
-      toFieldPath: spec.forProvider.values.server.ingressGrpc.hosts[0]
-      transforms:
-      - type: string
-        string:
-          fmt: "grpc.%s"
-    - fromFieldPath: spec.parameters.argocd.host
-      toFieldPath: spec.forProvider.values.server.ingressGrpc.tls[0].hosts[0]
-      transforms:
-      - type: string
-        string:
-          fmt: "grpc.%s"
-    - fromFieldPath: metadata.name 
-      toFieldPath: metadata.name
-      transforms:
-      - type: string
-        string: 
-          fmt: "%s-argocd"
-  - name: argocd-clusters-application
-    base: 
-      apiVersion: kubernetes.crossplane.io/v1alpha1
-      kind: Object
-      spec: 
-        forProvider:  
-          manifest: 
-            apiVersion: argoproj.io/v1alpha1
-            kind: Application
-            metadata:
-              name: clusters
+  mode: Pipeline
+  pipeline:
+  - step: patch-and-transform
+    functionRef:
+      name: crossplane-contrib-function-patch-and-transform
+    input:
+      apiVersion: pt.fn.crossplane.io/v1beta1
+      kind: Resources
+      patchSets:
+      - name: target-cluster
+        patches:
+        - fromFieldPath: spec.parameters.clusterId
+          toFieldPath: spec.providerConfigRef.name
+      resources:
+      - name: cert-manager
+        base:
+          apiVersion: helm.crossplane.io/v1beta1
+          kind: Release
+          metadata: 
+            annotations:
+              crossplane.io/external-name: cert-manager
+          spec:
+            forProvider:
+              namespace: cert-manager
+              chart:
+                name: cert-manager
+                repository: https://charts.jetstack.io
+                version: v1.13.1
+              values:
+                installCRDs: true
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+      - name: selfsigned-cluster-issuer
+        base:
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec:
+            forProvider:
+              manifest:
+                apiVersion: cert-manager.io/v1
+                kind: ClusterIssuer
+                metadata:
+                  name: selfsigned-cluster-issuer
+                spec:
+                  selfSigned: {}
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+      - name: argocd
+        base:
+          apiVersion: helm.crossplane.io/v1beta1
+          kind: Release
+          metadata:
+            annotations:
+              crossplane.io/external-name: argo-cd
+          spec:
+            forProvider:
               namespace: argocd
-            spec:
-              project: default
-              source:
-                repoURL: repository # patched
-                path: demo/clusters
-                targetRevision: HEAD
-              destination: 
-                name: in-cluster
-                namespace: default
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
-    - fromFieldPath: spec.parameters.repository
-      toFieldPath: spec.forProvider.manifest.spec.source.repoURL
-  - name: backstage
-    base:
-      apiVersion: helm.crossplane.io/v1beta1
-      kind: Release
-      metadata:
-        annotations:
-          crossplane.io/external-name: backstage
-      spec:
-        forProvider:
-          namespace: backstage
-          chart:
-            name: backstage
-            repository: https://backstage.github.io/charts
-          values:
-            ingress:
-              enabled: true
-              annotations:  
-                cert-manager.io/cluster-issuer: selfsigned-cluster-issuer 
-              tls:
-                enabled: true
-                secretName: backstage-tls
-            backstage: 
-              image: 
-                registry: docker.io
-                repository: library/backstage
-                tag: "1.0.0"
-                pullPolicy: IfNotPresent
-              extraEnvVarsSecrets:
-              - backstage
-              appConfig:
-                app:
-                  title: BACK Stack IDP
-                organization:
-                  name: BACK Stack
-                backend:
-                  listen:
-                    port: 7007
-                  csp:
-                    connect-src: ["'self'", 'http:', 'https:']
-                  cors:
-                    origin: http://localhost:3000
-                    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
-                    credentials: true
-                  database:
-                    client: better-sqlite3
-                    connection: ':memory:'
-                integrations:
-                  github:
-                    - host: github.com
-                      token: ${GITHUB_TOKEN}
-                proxy: 
-                techdocs:
-                  builder: 'local' # Alternatives - 'external'
-                  generator:
-                    runIn: 'docker' # Alternatives - 'local'
-                  publisher:
-                    type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
-                auth:
-                  providers: {}
-                scaffolder:
-                catalog:
-                  import:
-                    entityFilename: catalog-info.yaml
-                    pullRequestBranchName: backstage-integration
-                  locations:
-                    - type: url
-                      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme/org.yaml
-                      rules:
-                      - allow: [Group, User]
-                    - type: url
-                      target: repository # patched
-                      rules:
-                      - allow: [Component, API, Resource, Template, System]
-                kubernetes:
-                  serviceLocatorMethod:
-                    type: multiTenant
-                  clusterLocatorMethods:
-                    - type: catalog
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
-    - fromFieldPath: spec.parameters.backstage.host
-      toFieldPath: spec.forProvider.values.ingress.host
-    - fromFieldPath: spec.parameters.backstage.host
-      toFieldPath: spec.forProvider.values.backstage.appConfig.app.baseUrl
-      transforms:
-      - type: string
-        string:
-          fmt: "https://%s"
-    - fromFieldPath: spec.parameters.backstage.host
-      toFieldPath: spec.forProvider.values.backstage.appConfig.backend.baseUrl
-      transforms:
-      - type: string
-        string:
-          fmt: "https://%s"
-    - fromFieldPath: spec.parameters.repository
-      toFieldPath: spec.forProvider.values.backstage.appConfig.catalog.locations[1].target
-      transforms:
-      - type: string
-        string:
-          fmt: "%s/blob/main/catalog-info.yaml"
-    - fromFieldPath: metadata.name 
-      toFieldPath: metadata.name
-      transforms:
-      - type: string
-        string: 
-          fmt: "%s-backstage"
-  - name: backstage-kubernetes-read-only-role
-    base:
-      apiVersion: kubernetes.crossplane.io/v1alpha1
-      kind: Object
-      spec:
-        forProvider:
-          manifest:
-            apiVersion: rbac.authorization.k8s.io/v1
-            kind: ClusterRole
-            metadata:
-              name: backstage-read-only
-            rules:
-              - apiGroups:
-                  - '*'
-                resources:
-                  - pods
-                  - configmaps
-                  - services
-                  - deployments
-                  - replicasets
-                  - horizontalpodautoscalers
-                  - ingresses
-                  - statefulsets
-                  - limitranges
-                  - daemonsets
-                verbs:
-                  - get
-                  - list
-                  - watch
-              - apiGroups:
-                  - batch
-                resources:
-                  - jobs
-                  - cronjobs
-                verbs:
-                  - get
-                  - list
-                  - watch
-              - apiGroups:
-                  - metrics.k8s.io
-                resources:
-                  - pods
-                verbs:
-                  - get
-                  - list
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
-  - name: backstage-kubernetes-read-only-role-binding
-    base:
-      apiVersion: kubernetes.crossplane.io/v1alpha1
-      kind: Object
-      spec:
-        forProvider:
-          manifest:
-            apiVersion: rbac.authorization.k8s.io/v1
-            kind: ClusterRoleBinding
-            metadata:
-              name: backstage-read-only
-            roleRef:
-              apiGroup: rbac.authorization.k8s.io
-              kind: ClusterRole
-              name: backstage-read-only
-            subjects:
-            - kind: ServiceAccount
-              name: default
+              chart:
+                name: argo-cd
+                repository: https://argoproj.github.io/argo-helm
+              values:
+                configs:
+                  params:
+                    server.insecure: true
+                  cm:
+                    application.resourceTrackingMethod: annotation
+                server:
+                  deploymentAnnotations:
+                    backstage.io/kubernetes-id: argocd-service
+                  ingress:
+                    enabled: true
+                    annotations:
+                      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+                      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+                      cert-manager.io/cluster-issuer: selfsigned-cluster-issuer 
+                    hosts: 
+                    - hostname # patched
+                    tls:
+                    - hosts: 
+                      - hostname # patched
+                      secretName: argocd-tls
+                  ingressGrpc:
+                    enabled: true
+                    annotations:
+                      nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+                      cert-manager.io/cluster-issuer: selfsigned-cluster-issuer 
+                    hosts: 
+                    - grpc.hostname # patched
+                    tls:
+                    - hosts: 
+                      - grpc.hostname # patched
+                      secretName: argocd-grpc-tls
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+        - fromFieldPath: spec.parameters.argocd.host
+          toFieldPath: spec.forProvider.values.server.ingress.hosts[0]
+        - fromFieldPath: spec.parameters.argocd.host
+          toFieldPath: spec.forProvider.values.server.ingress.tls[0].hosts[0]
+        - fromFieldPath: spec.parameters.argocd.host
+          toFieldPath: spec.forProvider.values.server.ingressGrpc.hosts[0]
+          transforms:
+          - type: string
+            string:
+              type: Format
+              fmt: "grpc.%s"
+        - fromFieldPath: spec.parameters.argocd.host
+          toFieldPath: spec.forProvider.values.server.ingressGrpc.tls[0].hosts[0]
+          transforms:
+          - type: string
+            string:
+              type: Format
+              fmt: "grpc.%s"
+        - fromFieldPath: metadata.name 
+          toFieldPath: metadata.name
+          transforms:
+          - type: string
+            string: 
+              type: Format
+              fmt: "%s-argocd"
+      - name: argocd-clusters-application
+        base: 
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec: 
+            forProvider:  
+              manifest: 
+                apiVersion: argoproj.io/v1alpha1
+                kind: Application
+                metadata:
+                  name: clusters
+                  namespace: argocd
+                spec:
+                  project: default
+                  source:
+                    repoURL: repository # patched
+                    path: demo/clusters
+                    targetRevision: HEAD
+                  destination: 
+                    name: in-cluster
+                    namespace: default
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+        - fromFieldPath: spec.parameters.repository
+          toFieldPath: spec.forProvider.manifest.spec.source.repoURL
+      - name: argocd-kyverno-applicationset
+        base: 
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec: 
+            forProvider:  
+              manifest: 
+                apiVersion: argoproj.io/v1alpha1
+                kind: ApplicationSet
+                metadata:
+                  name: kyverno
+                  namespace: argocd
+                spec:
+                  generators:
+                  - clusters:
+                      selector:
+                        matchLabels:
+                          clusterType: spoke        
+                  template: 
+                    metadata:
+                      name: '{{name}}-kyverno'
+                      annotations:
+                        argocd.argoproj.io/sync-wave: "1"
+                    spec:
+                      project: "default"
+                      source:
+                        repoURL: https://github.com/kyverno/kyverno
+                        targetRevision: release-1.10
+                        path: charts/kyverno
+                        helm:
+                          releaseName: "{{name}}-kyverno"
+                          valueFiles:
+                          - "values.yaml"
+                      destination:
+                        server: '{{server}}'
+                        namespace: kyverno
+                      syncPolicy:
+                        syncOptions:
+                        - Replace=true
+                        - CreateNamespace=true
+                        automated:
+                          selfHeal: true  
+                        retry:
+                          limit: 30
+                          backoff:
+                            duration: 5s
+                            factor: 2
+                            maxDuration: 3m0s
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+      - name: argocd-kyverno-policies-applicationset
+        base: 
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec: 
+            forProvider:  
+              manifest: 
+                apiVersion: argoproj.io/v1alpha1
+                kind: ApplicationSet
+                metadata:
+                  name: kyverno-policies
+                  namespace: argocd
+                spec:
+                  generators:
+                  - clusters:
+                      selector:
+                        matchLabels:
+                          clusterType: spoke        
+                  template: 
+                    metadata:
+                      name: '{{name}}-kyverno-policies'
+                      annotations:
+                        argocd.argoproj.io/sync-wave: "1"
+                    spec:
+                      project: "default"
+                      source:
+                        repoURL: https://github.com/kyverno/kyverno
+                        targetRevision: release-1.10
+                        path: charts/kyverno-policies
+                        helm:
+                          releaseName: "{{name}}-kyverno-policies"
+                          valueFiles:
+                          - "values.yaml"
+                      destination:
+                        server: '{{server}}'
+                        namespace: kyverno
+                      syncPolicy:
+                        syncOptions:
+                        - Replace=true
+                        automated:
+                          selfHeal: true  
+                        retry:
+                          limit: 30
+                          backoff:
+                            duration: 5s
+                            factor: 2
+                            maxDuration: 3m0s
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+      - name: backstage
+        base:
+          apiVersion: helm.crossplane.io/v1beta1
+          kind: Release
+          metadata:
+            annotations:
+              crossplane.io/external-name: backstage
+          spec:
+            forProvider:
               namespace: backstage
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
-  - name: kyverno
-    base:
-      apiVersion: helm.crossplane.io/v1beta1
-      kind: Release
-      metadata:
-        annotations:
-          crossplane.io/external-name: kyverno
-      spec:
-        forProvider:
-          namespace: kyverno
-          chart:
-            name: kyverno
-            repository: https://kyverno.github.io/kyverno
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
-    - fromFieldPath: metadata.name 
-      toFieldPath: metadata.name
-      transforms:
-      - type: string
-        string: 
-          fmt: "%s-kyverno"
-  - name: kyverno-argocd-cluster-generation-clusterpolicy
-    base:
-      apiVersion: kubernetes.crossplane.io/v1alpha1
-      kind: Object
-      spec: 
-        forProvider: 
-          manifest: 
-            apiVersion: kyverno.io/v1
-            kind: ClusterPolicy
-            metadata:
-              name: argo-cluster-generation-from-kubeconfig-secret
-              annotations:
-                policies.kyverno.io/title: Argo Cluster Secret Generation From Kubeconfig secrets
-                policies.kyverno.io/category: Argo
-                policies.kyverno.io/severity: medium
-                policies.kyverno.io/subject: Secret
-                kyverno.io/kyverno-version: 1.7.1
-                policies.kyverno.io/minversion: 1.7.0
-                policies.kyverno.io/description: >-
-                  This policy generates and synchronizes Argo CD cluster secrets from Kubeconfig secrets.
-            spec:
-              generateExistingOnPolicyUpdate: true
-              rules:
-                - name: source-secret
-                  match:
-                    all:
-                      - resources:
-                          kinds:
-                            - v1/Secret
-                          names:
-                            - "*-kubeconfig"
-                  context:
-                    - name: clusterName
-                      variable:
-                        value: "{{ request.object.metadata.name | replace_all(@, '-kubeconfig', '')}}"
-                        jmesPath: 'to_string(@)'
-                    - name: metadataLabels
-                      variable:
-                        value:
-                          argocd.argoproj.io/secret-type: cluster
-                          clusterId: "{{ clusterName }}"
-                    - name: kubeconfigData
-                      variable:
-                        jmesPath: 'request.object.data.kubeconfig | to_string(@)'
-                    - name: serverName
-                      variable:
-                        value: "{{ kubeconfigData | base64_decode(@) | parse_yaml(@).clusters[0].cluster.server }}"
-                        jmesPath: 'to_string(@)'
-                    - name: bearerToken
-                      variable:
-                        value: "{{ kubeconfigData | base64_decode(@) | parse_yaml(@).users[0].user.token }}"
-                        jmesPath: 'to_string(@)'
-                    - name: caData
-                      variable:
-                        value: "{{ kubeconfigData | base64_decode(@) | parse_yaml(@).clusters[0].cluster.\"certificate-authority-data\" }}"
-                        jmesPath: 'to_string(@)'
-                    - name: dataConfig
-                      variable:
-                        value: |
-                          {
-                            "bearerToken": "{{ bearerToken }}",
-                            "tlsClientConfig": {
-                              "insecure": false,
-                              "caData": "{{ caData }}"
-                            }
-                          }
-                        jmesPath: 'to_string(@)'
-                  generate:
-                    synchronize: true
-                    apiVersion: v1
-                    kind: Secret
-                    name: "{{ clusterName }}"
-                    namespace: argocd
-                    data:
-                      metadata:
-                        labels:
-                            "{{ metadataLabels }}"
-                      type: Opaque
-                      data:
-                        name: "{{ clusterName | base64_encode(@) }}"
-                        server: "{{ serverName | base64_encode(@) }}"
-                        config: "{{ dataConfig | base64_encode(@) }}"
-    patches:
-    - type: PatchSet
-      patchSetName: target-cluster
+              chart:
+                name: backstage
+                repository: https://backstage.github.io/charts
+              values:
+                ingress:
+                  enabled: true
+                  annotations:  
+                    cert-manager.io/cluster-issuer: selfsigned-cluster-issuer 
+                  tls:
+                    enabled: true
+                    secretName: backstage-tls
+                backstage: 
+                  image: 
+                    registry: ghcr.io
+                    repository: opendev-ie/back-stack-backstage
+                    tag: 1.0.0
+                    pullPolicy: IfNotPresent
+                  extraEnvVarsSecrets:
+                  - backstage
+                  appConfig:
+                    app:
+                      title: BACK Stack IDP
+                    organization:
+                      name: BACK Stack
+                    backend:
+                      listen:
+                        port: 7007
+                      csp:
+                        connect-src: ["'self'", 'http:', 'https:']
+                      cors:
+                        origin: http://localhost:3000
+                        methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+                        credentials: true
+                      database:
+                        client: better-sqlite3
+                        connection: ':memory:'
+                    integrations:
+                      github:
+                        - host: github.com
+                          token: ${GITHUB_TOKEN}
+                    proxy: 
+                    techdocs:
+                      builder: 'local' # Alternatives - 'external'
+                      generator:
+                        runIn: 'docker' # Alternatives - 'local'
+                      publisher:
+                        type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
+                    auth:
+                      providers: {}
+                    scaffolder:
+                    catalog:
+                      import:
+                        entityFilename: catalog-info.yaml
+                        pullRequestBranchName: backstage-integration
+                      locations:
+                        - type: url
+                          target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme/org.yaml
+                          rules:
+                          - allow: [Group, User]
+                        - type: url
+                          target: repository # patched
+                          rules:
+                          - allow: [Component, API, Resource, Template, System]
+                    kubernetes:
+                      serviceLocatorMethod:
+                        type: multiTenant
+                      clusterLocatorMethods:
+                        - type: catalog
+                    vault:
+                      baseUrl: http://vault.vault.svc:8200
+                      publicUrl: hostname # patched
+                      token: ${VAULT_TOKEN}
+                      secretEngine: secret
+                      kvVersion: "2"
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+        - fromFieldPath: spec.parameters.backstage.host
+          toFieldPath: spec.forProvider.values.ingress.host
+        - fromFieldPath: spec.parameters.backstage.host
+          toFieldPath: spec.forProvider.values.backstage.appConfig.app.baseUrl
+          transforms:
+          - type: string
+            string:
+              type: Format
+              fmt: "https://%s"
+        - fromFieldPath: spec.parameters.backstage.host
+          toFieldPath: spec.forProvider.values.backstage.appConfig.backend.baseUrl
+          transforms:
+          - type: string
+            string:
+              type: Format
+              fmt: "https://%s"
+        - fromFieldPath: spec.parameters.repository
+          toFieldPath: spec.forProvider.values.backstage.appConfig.catalog.locations[1].target
+          transforms:
+          - type: string
+            string:
+              type: Format
+              fmt: "%s/blob/main/catalog-info.yaml"
+        - fromFieldPath: spec.parameters.vault.host
+          toFieldPath: spec.forProvider.values.backstage.appConfig.vault.publicUrl
+          transforms:
+          - type: string
+            string:
+              type: Format
+              fmt: "https://%s"
+        - fromFieldPath: metadata.name 
+          toFieldPath: metadata.name
+          transforms:
+          - type: string
+            string: 
+              type: Format
+              fmt: "%s-backstage"
+      - name: backstage-kubernetes-read-only-role
+        base:
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec:
+            forProvider:
+              manifest:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRole
+                metadata:
+                  name: backstage-read-only
+                rules:
+                  - apiGroups:
+                      - '*'
+                    resources:
+                      - pods
+                      - configmaps
+                      - services
+                      - deployments
+                      - replicasets
+                      - horizontalpodautoscalers
+                      - ingresses
+                      - statefulsets
+                      - limitranges
+                      - daemonsets
+                    verbs:
+                      - get
+                      - list
+                      - watch
+                  - apiGroups:
+                      - batch
+                    resources:
+                      - jobs
+                      - cronjobs
+                    verbs:
+                      - get
+                      - list
+                      - watch
+                  - apiGroups:
+                      - metrics.k8s.io
+                    resources:
+                      - pods
+                    verbs:
+                      - get
+                      - list
+                  - apiGroups:
+                      - backstack.cncf.io
+                    resources:
+                      - '*'
+                    verbs:
+                      - get
+                      - list
+                      - watch
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+      - name: backstage-kubernetes-read-only-role-binding
+        base:
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec:
+            forProvider:
+              manifest:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRoleBinding
+                metadata:
+                  name: backstage-read-only
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: backstage-read-only
+                subjects:
+                - kind: ServiceAccount
+                  name: default
+                  namespace: backstage
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+      - name: kyverno
+        base:
+          apiVersion: helm.crossplane.io/v1beta1
+          kind: Release
+          metadata:
+            annotations:
+              crossplane.io/external-name: kyverno
+          spec:
+            forProvider:
+              namespace: kyverno
+              chart:
+                name: kyverno
+                repository: https://kyverno.github.io/kyverno
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+        - fromFieldPath: metadata.name 
+          toFieldPath: metadata.name
+          transforms:
+          - type: string
+            string: 
+              type: Format
+              fmt: "%s-kyverno"
+      - name: kyverno-argocd-cluster-generation-clusterpolicy
+        base:
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec: 
+            forProvider: 
+              manifest: 
+                apiVersion: kyverno.io/v1
+                kind: ClusterPolicy
+                metadata:
+                  name: argo-cluster-generation-from-kubeconfig-secret
+                  annotations:
+                    policies.kyverno.io/title: Argo Cluster Secret Generation From Kubeconfig secrets
+                    policies.kyverno.io/category: Argo
+                    policies.kyverno.io/severity: medium
+                    policies.kyverno.io/subject: Secret
+                    kyverno.io/kyverno-version: 1.7.1
+                    policies.kyverno.io/minversion: 1.7.0
+                    policies.kyverno.io/description: >-
+                      This policy generates and synchronizes Argo CD cluster secrets from Kubeconfig secrets.
+                spec:
+                  generateExistingOnPolicyUpdate: true
+                  rules:
+                    - name: source-secret
+                      match:
+                        all:
+                          - resources:
+                              kinds:
+                                - v1/Secret
+                              names:
+                                - "*-kubeconfig"
+                      context:
+                        - name: clusterName
+                          variable:
+                            value: "{{ request.object.metadata.name | replace_all(@, '-kubeconfig', '')}}"
+                            jmesPath: 'to_string(@)'
+                        - name: metadataLabels
+                          variable:
+                            value:
+                              argocd.argoproj.io/secret-type: cluster
+                              clusterId: "{{ clusterName }}"
+                              clusterType: spoke
+                        - name: kubeconfigData
+                          variable:
+                            jmesPath: 'request.object.data.kubeconfig | to_string(@)'
+                        - name: serverName
+                          variable:
+                            value: "{{ kubeconfigData | base64_decode(@) | parse_yaml(@).clusters[0].cluster.server }}"
+                            jmesPath: 'to_string(@)'
+                        - name: bearerToken
+                          variable:
+                            value: "{{ kubeconfigData | base64_decode(@) | parse_yaml(@).users[0].user.token }}"
+                            jmesPath: 'to_string(@)'
+                        - name: caData
+                          variable:
+                            value: "{{ kubeconfigData | base64_decode(@) | parse_yaml(@).clusters[0].cluster.\"certificate-authority-data\" }}"
+                            jmesPath: 'to_string(@)'
+                        - name: dataConfig
+                          variable:
+                            value: |
+                              {
+                                "bearerToken": "{{ bearerToken }}",
+                                "tlsClientConfig": {
+                                  "insecure": false,
+                                  "caData": "{{ caData }}"
+                                }
+                              }
+                            jmesPath: 'to_string(@)'
+                      generate:
+                        synchronize: true
+                        apiVersion: v1
+                        kind: Secret
+                        name: "{{ clusterName }}"
+                        namespace: argocd
+                        data:
+                          metadata:
+                            labels:
+                                "{{ metadataLabels }}"
+                          type: Opaque
+                          data:
+                            name: "{{ clusterName | base64_encode(@) }}"
+                            server: "{{ serverName | base64_encode(@) }}"
+                            config: "{{ dataConfig | base64_encode(@) }}"
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+      - name: vault
+        base:
+          apiVersion: helm.crossplane.io/v1beta1
+          kind: Release
+          metadata:
+            annotations:
+              crossplane.io/external-name: vault
+          spec:
+            forProvider:
+              namespace: vault
+              chart:
+                name: vault
+                repository: https://helm.releases.hashicorp.com
+              values:
+                server:
+                  dev:
+                    enabled: true
+                  ui:
+                    enabled: true
+                  ingress:
+                    enabled: true
+                    annotations:
+                      cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
+                    hosts:
+                    - host: hostname # patched
+                    tls:
+                    - hosts:
+                      - hostname # patched
+                      secretName: vault-tls
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+        - fromFieldPath: spec.parameters.vault.host
+          toFieldPath: spec.forProvider.values.server.ingress.hosts[0].host
+        - fromFieldPath: spec.parameters.vault.host
+          toFieldPath: spec.forProvider.values.server.ingress.tls[0].hosts[0]
+        - fromFieldPath: metadata.name 
+          toFieldPath: metadata.name
+          transforms:
+          - type: string
+            string: 
+              type: Format
+              fmt: "%s-vault"
+      - name: crossplane-vaultconfig
+        base:
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec: 
+            forProvider:  
+              manifest: 
+                apiVersion: secrets.crossplane.io/v1alpha1
+                kind: VaultConfig
+                metadata:
+                  name: vault-internal
+                spec:
+                  server: http://vault.vault:8200
+                  mountPath: secret/
+                  version: v2
+                  auth:
+                    method: Token
+                    token:
+                      source: Filesystem
+                      fs:
+                        path: /vault/secrets/token
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster
+      - name: crossplane-storeconfig
+        base:
+          apiVersion: kubernetes.crossplane.io/v1alpha1
+          kind: Object
+          spec: 
+            forProvider:  
+              manifest: 
+                apiVersion: secrets.crossplane.io/v1alpha1
+                kind: StoreConfig
+                metadata:
+                  name: vault
+                spec:
+                  type: Plugin
+                  defaultScope: crossplane-system
+                  plugin:
+                    endpoint: ess-plugin-vault.crossplane-system:4040
+                    configRef:
+                      apiVersion: secrets.crossplane.io/v1alpha1
+                      kind: VaultConfig
+                      name: vault-internal
+        patches:
+        - type: PatchSet
+          patchSetName: target-cluster

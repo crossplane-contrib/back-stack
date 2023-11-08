@@ -27,20 +27,7 @@ spec:
                     region:
                       type: string
                       description: Region is the region you'd like your resource to be created in.
-                    deletionPolicy:
-                      description: When the Composition is deleted, delete the AWS resources. Defaults to Delete
-                      enum:
-                      - Delete
-                      - Orphan
-                      type: string
-                      default: Delete
-                    providerConfigName:
-                      description: Crossplane ProviderConfig to use for provisioning this resources
-                      type: string
-                      default: default
                   required:
-                  - deletionPolicy
-                  - providerConfigName
                   - id
                   - region
                   type: object

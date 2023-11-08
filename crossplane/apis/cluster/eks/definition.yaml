@@ -40,42 +40,22 @@ spec:
                       roleArn:
                         description: The IAM Role ARN to connect as ClusterAdmin.
                         type: string
-                      userArn:
-                        description: The IAM User ARN to connect as ClusterAdmin.
-                        type: string
                   networkSelector:
                     type: string
                     description: NetworkSelector employs a specific type of network architecture.
                     enum:
                     - basic
                     default: basic
-                  serviceSelector:
-                    type: string
-                    description: ServiceSelector employs a specific type of service architecture.
-                    enum:
-                    - default
-                    - gitops-master
-                    default: default
-                  deletionPolicy:
-                    description: When the Composition is deleted, delete the AWS resources. Defaults to Delete
-                    enum:
-                    - Delete
-                    - Orphan
-                    type: string
-                    default: Delete
-                  providerConfigName:
-                    description: Crossplane ProviderConfig to use for provisioning this resources
-                    type: string
-                    default: default
                   version:
                     type: string
                     description: Kubernetes version of the Cluster
                     enum:
+                    - "1.28"
                     - "1.27"
                     - "1.26"
                     - "1.25"
                     - "1.24"
-                    default: "1.27"
+                    default: "1.28"
                   nodes:
                     type: object
                     description: Cluster node configuration parameters.
@@ -90,53 +70,10 @@ spec:
                     required:
                     - count
                     - instanceType
-                  gitops:
-                    type: object
-                    description: GitOps configure external gitops system for mcp controlplane
-                    properties:
-                      url:
-                        type: string
-                        description: Url for GitOps Sync.
-                      path:
-                        type: string
-                        description: path in Repo for GitOps Sync.
-                      kubeConfigSecretRef:
-                        type: object
-                        description: location for kubeconfig mcp controlplane
-                        properties:
-                          name:
-                            type: string
-                            description: Name of the secret.
-                          namespace:
-                            type: string
-                            description: Namespace of the secret.
-                        required:
-                        - name
-                        - namespace
-                    required:
-                    - url
-                  services:
-                    type: object
-                    description: Services configuration parameters.
-                    properties:
-                      operators:
-                        type: object
-                        description: Configuration for operators.
-                        properties:
-                          flux:
-                            type: object
-                            description: Configuration for the Flux GitOps operator.
-                            properties:
-                              version:
-                                type: string
-                                description: Flux operator version to run.
-                                default: "2.9.2"
                 required:
                 - nodes
                 - id
                 - region
-                - deletionPolicy
-                - providerConfigName
             required:
             - parameters
           status:

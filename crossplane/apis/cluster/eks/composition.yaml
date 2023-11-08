@@ -1,12 +1,12 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xclusters.aws.caas.upbound.io
+  name: xeksclusters.backstack.cncf.io
 spec:
   writeConnectionSecretsToNamespace: crossplane-system
   compositeTypeRef:
-    apiVersion: aws.caas.upbound.io/v1alpha1
-    kind: XCluster
+    apiVersion: backstack.cncf.io/v1alpha1
+    kind: XEKSCluster
   resources:
     - base:
         apiVersion: aws.caas.upbound.io/v1alpha1
@@ -16,10 +16,6 @@ spec:
           toFieldPath: spec.parameters.id
         - fromFieldPath: spec.parameters.region
           toFieldPath: spec.parameters.region
-        - fromFieldPath: spec.parameters.deletionPolicy
-          toFieldPath: spec.parameters.deletionPolicy
-        - fromFieldPath: spec.parameters.providerConfigName
-          toFieldPath: spec.parameters.providerConfigName
         - fromFieldPath: spec.parameters.networkSelector
           toFieldPath: spec.compositionSelector.matchLabels[type]
         - type: ToCompositeFieldPath
@@ -39,10 +35,6 @@ spec:
           toFieldPath: spec.parameters.id
         - fromFieldPath: spec.parameters.region
           toFieldPath: spec.parameters.region
-        - fromFieldPath: spec.parameters.deletionPolicy
-          toFieldPath: spec.parameters.deletionPolicy
-        - fromFieldPath: spec.parameters.providerConfigName
-          toFieldPath: spec.parameters.providerConfigName
         - fromFieldPath: spec.parameters.id
           toFieldPath: metadata.annotations[crossplane.io/external-name]
         - fromFieldPath: metadata.uid
@@ -61,30 +53,7 @@ spec:
           toFieldPath: spec.parameters.nodes.instanceType
         - fromFieldPath: spec.parameters.iam.roleArn
           toFieldPath: spec.parameters.iam.roleArn
-        - fromFieldPath: spec.parameters.iam.userArn
-          toFieldPath: spec.parameters.iam.userArn
         - fromFieldPath: status.subnetIds
           toFieldPath: spec.parameters.subnetIds
           policy:
             fromFieldPath: Required
-    - base:
-        apiVersion: aws.caas.upbound.io/v1alpha1
-        kind: XServices
-      name: compositeClusterServices
-      patches:
-        - fromFieldPath: spec.parameters.deletionPolicy
-          toFieldPath: spec.deletionPolicy
-        - fromFieldPath: spec.parameters.id
-          toFieldPath: spec.providerConfigRef.name
-        - fromFieldPath: spec.parameters.services.operators.flux.version
-          toFieldPath: spec.operators.flux.version
-        - fromFieldPath: spec.parameters.gitops.url
-          toFieldPath: spec.gitops.url
-        - fromFieldPath: spec.parameters.gitops.path
-          toFieldPath: spec.gitops.path
-        - fromFieldPath: spec.parameters.gitops.kubeConfigSecretRef.name
-          toFieldPath: spec.gitops.kubeConfigSecretRef.name
-        - fromFieldPath: spec.parameters.gitops.kubeConfigSecretRef.namespace
-          toFieldPath: spec.gitops.kubeConfigSecretRef.namespace
-        - fromFieldPath: spec.parameters.serviceSelector
-          toFieldPath: spec.compositionSelector.matchLabels[type]
