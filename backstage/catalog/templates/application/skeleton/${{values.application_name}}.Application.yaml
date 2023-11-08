@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://${{ values.application_source_host }}/${{ values.application_source_owner }}/${{ values.application_source_repo }}
+    repoURL: ${{ values.application_source }}
     path: ${{ values.application_source_path }}
     targetRevision: HEAD
   destination: 

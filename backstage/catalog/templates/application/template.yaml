@@ -25,10 +25,6 @@ spec:
           title: Application Source
           type: string
           description: The source repository of the application to deploy
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
-              - github.com
         application_source_path:
           title: Path
           type: string
@@ -68,9 +64,7 @@ spec:
         values:
           cluster_id: ${{ parameters.cluster_id | parseEntityRef | pick('name') }}
           application_name: ${{ parameters.name }}
-          application_source_host: ${{ parameters.application_source | parseRepoUrl | pick('host') }}
-          application_source_owner: ${{ parameters.application_source | parseRepoUrl | pick('owner') }}
-          application_source_repo: ${{ parameters.application_source | parseRepoUrl | pick('repo') }}
+          application_source: ${{ parameters.application_source }}
           application_source_path: ${{ parameters.application_source_path }}
     - id: publish
       name: Publish
