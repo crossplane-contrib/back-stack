@@ -4,6 +4,8 @@ metadata:
   name: xeksclusters.backstack.cncf.io
 spec:
   writeConnectionSecretsToNamespace: crossplane-system
+  publishConnectionDetailsWithStoreConfigRef: 
+    name: vault
   compositeTypeRef:
     apiVersion: backstack.cncf.io/v1alpha1
     kind: XEKSCluster

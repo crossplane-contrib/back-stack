@@ -47,8 +47,8 @@ EOF
 
 
 # configure provider-helm for crossplane
-waitfor default providers.pkg.crossplane.io crossplane-contrib-provider-helm
-kubectl wait provider/crossplane-contrib-provider-helm --for=condition=Healthy --timeout=1m
+waitfor default crd providerconfigs.helm.crossplane.io
+kubectl wait crd/providerconfigs.helm.crossplane.io --for=condition=Established --timeout=1m
 SA=$(kubectl -n crossplane-system get sa -o name | grep provider-helm | sed -e 's|serviceaccount\/|crossplane-system:|g')
 kubectl create clusterrolebinding provider-helm-admin-binding --clusterrole cluster-admin --serviceaccount="${SA}"
 kubectl create -f - <<- EOF
@@ -62,8 +62,8 @@ kubectl create -f - <<- EOF
 EOF
 
 # configure provider-kubernetes for crossplane
-waitfor default providers.pkg.crossplane.io crossplane-contrib-provider-kubernetes
-kubectl wait provider/crossplane-contrib-provider-kubernetes --for=condition=Healthy --timeout=1m
+waitfor default crd providerconfigs.kubernetes.crossplane.io
+kubectl wait crd/providerconfigs.kubernetes.crossplane.io --for=condition=Established --timeout=1m
 SA=$(kubectl -n crossplane-system get sa -o name | grep provider-kubernetes | sed -e 's|serviceaccount\/|crossplane-system:|g')
 kubectl create clusterrolebinding provider-kubernetes-admin-binding --clusterrole cluster-admin --serviceaccount="${SA}"
 kubectl create -f - <<- EOF
@@ -77,8 +77,8 @@ kubectl create -f - <<- EOF
 EOF
 
 # configure provider-azure for crossplane
-waitfor default providers.pkg.crossplane.io upbound-provider-family-azure
-kubectl wait provider/upbound-provider-family-azure --for=condition=Healthy --timeout=1m
+waitfor default crd providerconfigs.azure.upbound.io
+kubectl wait crd/providerconfigs.azure.upbound.io --for=condition=Established --timeout=1m
 kubectl create -f - <<- EOF
     apiVersion: azure.upbound.io/v1beta1
     kind: ProviderConfig
@@ -94,8 +94,8 @@ kubectl create -f - <<- EOF
 EOF
 
 # configure provider-aws for crossplane
-waitfor default providers.pkg.crossplane.io upbound-provider-family-aws
-kubectl wait provider/upbound-provider-family-aws --for=condition=Healthy --timeout=1m
+waitfor default crd providerconfigs.aws.upbound.io
+kubectl wait crd/providerconfigs.aws.upbound.io --for=condition=Established --timeout=1m
 kubectl create -f - <<- EOF
     apiVersion: aws.upbound.io/v1beta1
     kind: ProviderConfig
