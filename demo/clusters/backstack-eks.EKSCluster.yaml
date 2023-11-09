@@ -1,0 +1,21 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: EKSCluster
+metadata:
+  name: backstack-eks
+  namespace: default
+spec:
+  parameters:
+    id: backstack-eks
+    region: us-east-1
+    iam:
+      roleArn: arn:aws:iam::609897127049:role/AWSReservedSSO_Half-Day-AdminAccess_365e085e478bce0c
+    version: "1.28"
+    nodes:
+      count: 3
+      instanceType: t3.small
+  writeConnectionSecretToRef:
+    name: backstack-eks-kubeconfig
+  publishConnectionDetailsTo:
+    name: backstack-eks/backstack-eks-kubeconfig
+    configRef:
+      name: vault
