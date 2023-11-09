@@ -1,0 +1,19 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: AKSCluster
+metadata:
+  name: backstack-pre
+  namespace: default
+spec:
+  parameters:
+    id: backstack-pre
+    region: North Europe
+    version: 1.27.3
+    nodes:
+      count: 3
+      instanceType: Standard_B2s
+  writeConnectionSecretToRef:
+    name: backstack-pre-kubeconfig
+  publishConnectionDetailsTo:
+    name: backstack-pre/backstack-pre-kubeconfig
+    configRef:
+      name: vault
