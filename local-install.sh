@@ -2,6 +2,24 @@
 # import helpers
 . scripts/common.sh
 
+# Check for required tools
+for tool in "helm" "kind" "kubectl"
+do
+  if ! command_exists "$tool"; then
+    echo "This script relies on $tool. Install with 'brew install $tool' (assuming you're on Mac)";
+    exit 1;
+  fi
+done
+
+# Version check for `helm`
+HELM_VERSION=$(helm version --template='{{.Version}}')
+HELM_MAJOR_VERSION=$(echo ${HELM_VERSION:1} | cut -d'.' -f1)
+HELM_MINOR_VERSION=$(echo $HELM_VERSION | cut -d'.' -f2)
+if ! ( [[ "$HELM_MAJOR_VERSION" -gt 3 ]] || ( [[ "$HELM_MAJOR_VERSION" -eq 3 ]] && [[ "$HELM_MINOR_VERSION" -gt 9 ]] ) ); then
+  echo "Unsupported version of helm - update to at least 3.10.0 for support for '--set-json'"
+  exit 1
+fi
+
 # set up kind cluster
 kind create cluster --name backstack --wait 5m --config=- <<- EOF
   kind: Cluster
