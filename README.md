@@ -21,9 +21,9 @@ For a local install, you need kind installed and a bash-compatible shell.
   REPOSITORY=https://github.com/<path to forked repo>
   VAULT_TOKEN=root # this is the default for 'dev' mode
   AZURE_CREDENTIALS='{"clientId": "xxx","clientSecret": "xxx","subscriptionId": "xxx","tenantId": "xxx","activeDirectoryEndpointUrl": "https://login.microsoftonline.com","resourceManagerEndpointUrl": "https://management.azure.com/","activeDirectoryGraphResourceId": "https://graph.windows.net/","sqlManagementEndpointUrl": "https://management.core.windows.net:8443/","galleryEndpointUrl": "https://gallery.azure.com/","managementEndpointUrl": "https://management.core.windows.net/"}'
-AWS_ACCESS_KEY_ID="xxx"
-AWS_SECRET_ACCESS_KEY="xxx"
-AWS_SESSION_TOKEN="xxx"
+  AWS_ACCESS_KEY_ID="xxx"
+  AWS_SECRET_ACCESS_KEY="xxx"
+  AWS_SESSION_TOKEN="xxx"
   ```
   
 - Run the installer

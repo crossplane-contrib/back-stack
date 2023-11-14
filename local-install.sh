@@ -27,7 +27,11 @@ EOF
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/kind/deploy.yaml
 kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s 
 
+
+
 # install crossplane
+helm repo add crossplane-stable https://charts.crossplane.io/stable
+helm repo update
 helm upgrade --install crossplane --namespace crossplane-system --create-namespace crossplane-stable/crossplane --set args='{--enable-external-secret-stores}' --wait
 
 # install vault ess plugin
