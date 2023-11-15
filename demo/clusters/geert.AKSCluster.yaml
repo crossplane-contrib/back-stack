@@ -1,0 +1,19 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: AKSCluster
+metadata:
+  name: geert
+  namespace: default
+spec:
+  parameters:
+    id: geert
+    region: west europe
+    version: 1.27.3
+    nodes:
+      count: 1
+      instanceType: Standard_B2s
+  writeConnectionSecretToRef:
+    name: geert-kubeconfig
+  publishConnectionDetailsTo:
+    name: geert/geert-kubeconfig
+    configRef:
+      name: vault
