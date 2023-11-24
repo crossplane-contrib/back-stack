@@ -1,0 +1,19 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: AKSCluster
+metadata:
+  name: innovationdaycluster
+  namespace: default
+spec:
+  parameters:
+    id: innovationdaycluster
+    region: westeurope
+    version: 1.27.3
+    nodes:
+      count: 1
+      instanceType: Standard_B2s
+  writeConnectionSecretToRef:
+    name: innovationdaycluster-kubeconfig
+  publishConnectionDetailsTo:
+    name: innovationdaycluster/innovationdaycluster-kubeconfig
+    configRef:
+      name: vault
