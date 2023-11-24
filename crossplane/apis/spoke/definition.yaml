@@ -39,6 +39,6 @@ spec:
                 required:
                 - location 
                 - resourceGroupName
-                # - resourceName 
+
             required:
             - parameters

@@ -23,3 +23,8 @@ rebuild-backstage:
   popd
   
   kubectl get pods -n backstage -o name | xargs kubectl delete -n backstage
+
+apply-spoke:
+  kubectl apply -f ./crossplane/apis/hub/composition.yaml
+  kubectl apply -f ./crossplane/apis/spoke/definition.yaml
+  kubectl apply -f ./crossplane/apis/spoke/composition.yaml

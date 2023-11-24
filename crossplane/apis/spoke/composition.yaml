@@ -20,7 +20,7 @@ spec:
   #       toFieldPath: spec.forProvider.resourceGroupName
 
   resources:
-  - name: rg-xebia-crossplane1
+  - name: rg-xebia-spoke
     base:
       apiVersion: azure.upbound.io/v1beta1
       kind: ResourceGroup
@@ -30,6 +30,5 @@ spec:
       fromFieldPath: spec.parameters.location
       toFieldPath: spec.forProvider.location 
 
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.resourceGroupName
-      toFieldPath: spec.forProvider.resourceGroupName
+    # - fromFieldPath: spec.parameters.resourceGroupName
+    #   toFieldPath: .name
