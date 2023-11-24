@@ -1,9 +1,9 @@
 apiVersion: xebia.cncf.io/v1alpha1
 kind: XebiaSpoke 
 metadata:
-  name: rg-xebia-spoke1 
+  name: rg-xebia-spoke
   namespace: default
 spec:
   parameters:
     location: westeurope
-    resourceGroupName: rg-xebia-spoke2
+    resourceGroupName: rg-xebia-spoke-blablacustom	

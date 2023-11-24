@@ -20,7 +20,7 @@ spec:
   #       toFieldPath: spec.forProvider.resourceGroupName
 
   resources:
-  - name: rg-xebia-spoke
+  - name: resource-group
     base:
       apiVersion: azure.upbound.io/v1beta1
       kind: ResourceGroup
@@ -30,5 +30,16 @@ spec:
       fromFieldPath: spec.parameters.location
       toFieldPath: spec.forProvider.location 
 
-    # - fromFieldPath: spec.parameters.resourceGroupName
-    #   toFieldPath: .name
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.resourceGroupName
+      toFieldPath: metadata.annotations['crossplane.io/external-name']
+
+  # - name: storage-account
+  #   base:
+  #     apiVersion: storage.azure.upbound.io/v1beta1
+  #     kind: Account 
+
+  #   patches:
+  #   - type: FromCompositeFieldPath
+  #     fromFieldPath: spec.parameters.location
+  #     toFieldPath: spec.forProvider.location 
