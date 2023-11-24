@@ -1,0 +1,22 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: spoke.xebia.cncf.io
+  labels:
+    provider: azure
+    type: basic
+
+spec:
+  compositeTypeRef:
+    apiVersion: xebia.cncf.io/v1alpha1
+    kind: XXebiaSpoke
+  resources:
+  - name: rg-xebia-crossplane1
+    base:
+      apiVersion: azure.upbound.io/v1beta1
+      kind: ResourceGroup
+
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.location 

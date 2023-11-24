@@ -1,0 +1,43 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xxebiaspokes.xebia.cncf.io
+spec:
+  group: xebia.cncf.io
+  names:
+    kind: XXebiaSpoke 
+    plural: xxebiaspokes
+  claimNames:
+    kind: XebiaSpoke 
+    plural: xebiaspokes 
+  connectionSecretKeys:
+  - kubeconfig
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              parameters:
+                type: object
+                description: Spoke configuration parameters.
+                properties:
+                
+                  location:
+                    type: string
+                    description: Azure region to create resources in 
+
+                  # resourceName:
+                  #   type: string
+                  #   description: Shortname to create azure resource names
+
+                required:
+                - location 
+                # - resourceName 
+            required:
+            - parameters
