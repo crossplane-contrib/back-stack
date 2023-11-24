@@ -22,6 +22,9 @@ spec:
   resources:
   - name: resource-group
     base:
+      metadata:
+        labels:
+          resource-group: rg1
       apiVersion: azure.upbound.io/v1beta1
       kind: ResourceGroup
 
@@ -34,6 +37,19 @@ spec:
       fromFieldPath: spec.parameters.resourceGroupName
       toFieldPath: metadata.annotations['crossplane.io/external-name']
 
+  - name: resource-group2
+    base:
+      metadata:
+        labels:
+          resource-group: rg2
+      apiVersion: azure.upbound.io/v1beta1
+      kind: ResourceGroup
+
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.location 
+
   - name: storage-account
     base:
       apiVersion: storage.azure.upbound.io/v1beta1
@@ -43,16 +59,12 @@ spec:
           accountKind: StorageV2
           accountReplicationType: LRS
           accountTier: Standard
+          resourceGroupNameSelector:
+            matchLabels:
+              resource-group: rg2
 
     patches:
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.location
       toFieldPath: spec.forProvider.location 
 
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.resourceGroupName
-      toFieldPath: spec.forProvider.resourceGroupName
-
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.storageAccountName
-      toFieldPath: metadata.annotations['crossplane.io/external-name']
