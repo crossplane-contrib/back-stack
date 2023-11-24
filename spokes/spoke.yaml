@@ -6,3 +6,4 @@ metadata:
 spec:
   parameters:
     location: westeurope
+    resourceGroupName: rg-xebia-spoke2

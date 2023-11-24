@@ -10,6 +10,15 @@ spec:
   compositeTypeRef:
     apiVersion: xebia.cncf.io/v1alpha1
     kind: XXebiaSpoke
+
+  # patchSet:
+  #   generator:
+  #     patches:
+  #     - fromFieldPath: spec.parameters.location
+  #       toFieldPath: spec.forProvider.location
+  #     - fromFieldPath: spec.parameters.resourceGroupName
+  #       toFieldPath: spec.forProvider.resourceGroupName
+
   resources:
   - name: rg-xebia-crossplane1
     base:
@@ -20,3 +29,7 @@ spec:
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.location
       toFieldPath: spec.forProvider.location 
+
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.resourceGroupName
+      toFieldPath: spec.forProvider.resourceGroupName

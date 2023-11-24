@@ -32,12 +32,13 @@ spec:
                     type: string
                     description: Azure region to create resources in 
 
-                  # resourceName:
-                  #   type: string
-                  #   description: Shortname to create azure resource names
+                  resourceGroupName:
+                    type: string
+                    description: Name of the resource group 
 
                 required:
                 - location 
+                - resourceGroupName
                 # - resourceName 
             required:
             - parameters
