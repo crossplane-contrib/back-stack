@@ -1,0 +1,19 @@
+apiVersion: backstack.cncf.io/v1alpha1
+kind: AKSCluster
+metadata:
+  name: yesehdev
+  namespace: default
+spec:
+  parameters:
+    id: yesehdev
+    region: westeurope
+    version: 1.27.3
+    nodes:
+      count: 1
+      instanceType: Standard_B2s
+  writeConnectionSecretToRef:
+    name: yesehdev-kubeconfig
+  publishConnectionDetailsTo:
+    name: yesehdev/yesehdev-kubeconfig
+    configRef:
+      name: vault
