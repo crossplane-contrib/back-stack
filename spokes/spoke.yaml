@@ -7,3 +7,4 @@ spec:
   parameters:
     location: westeurope
     resourceGroupName: rg-xebia-spoke-blablacustom	
+    storageAccountName: saxebiaspokeblabla
