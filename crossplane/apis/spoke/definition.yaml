@@ -36,9 +36,14 @@ spec:
                     type: string
                     description: Name of the resource group 
 
+                  storageAccountName:
+                    type: string
+                    description: Name of the storage account
+
                 required:
                 - location 
                 - resourceGroupName
+                - storageAccountName
 
             required:
             - parameters

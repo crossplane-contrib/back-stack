@@ -34,12 +34,25 @@ spec:
       fromFieldPath: spec.parameters.resourceGroupName
       toFieldPath: metadata.annotations['crossplane.io/external-name']
 
-  # - name: storage-account
-  #   base:
-  #     apiVersion: storage.azure.upbound.io/v1beta1
-  #     kind: Account 
+  - name: storage-account
+    base:
+      apiVersion: storage.azure.upbound.io/v1beta1
+      kind: Account 
+      spec:
+        forProvider:
+          accountKind: StorageV2
+          accountReplicationType: LRS
+          accountTier: Standard
 
-  #   patches:
-  #   - type: FromCompositeFieldPath
-  #     fromFieldPath: spec.parameters.location
-  #     toFieldPath: spec.forProvider.location 
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.location 
+
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.resourceGroupName
+      toFieldPath: spec.forProvider.resourceGroupName
+
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.storageAccountName
+      toFieldPath: metadata.annotations['crossplane.io/external-name']
