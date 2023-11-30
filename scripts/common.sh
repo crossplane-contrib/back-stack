@@ -21,6 +21,10 @@ loadenv() {
   local envfile=${1?env file is required}; shift
 
   set -a
-  source $envfile 
+  source $envfile
   set +a
+}
+
+command_exists() {
+  command -v "$@" > /dev/null 2>&1
 }
